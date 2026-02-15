@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "104851831863",
+    "project_id": "usverse-platform",
+    "storage_bucket": "usverse-platform.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:104851831863:android:e52789c6701ab12126d3b2",
+        "android_client_info": {
+          "package_name": "com.usverse.usverse"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXbr6MiEvdPwQNtQ-H93YF--1XMxBVxHc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
