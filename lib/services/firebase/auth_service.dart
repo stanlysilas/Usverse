@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:usverse/features/app/app_router.dart';
 import 'package:usverse/features/auth/login_screen.dart';
-import 'package:usverse/features/setup/partner_setup_screen.dart';
+import 'package:usverse/services/firebase/firestore_service.dart';
 
 class AuthService extends StatefulWidget {
   const AuthService({super.key});
@@ -13,51 +13,40 @@ class AuthService extends StatefulWidget {
 
 class _AuthServiceState extends State<AuthService> {
   final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirestoreService firestoreService = FirestoreService();
+  final GoogleAuthProvider googleAuthProvider = GoogleAuthProvider();
 
-  final ActionCodeSettings actionCodeSettings = ActionCodeSettings(
-    url: 'https://usverse-dev.web.app/login',
-    handleCodeInApp: true,
-  );
-
-  @override
-  void initState() {
-    super.initState();
-    completeEmailLinkSignIn();
-  }
+  bool userInitialized = false;
 
   Stream<User?> get authStateChanges => auth.authStateChanges();
+
+  Future<void> handleUserDocument(User? user) async {
+    if (userInitialized) return;
+
+    userInitialized = true;
+
+    await firestoreService.createOrUpdateUser(user!);
+  }
 
   User? getCurrentUser() {
     return auth.currentUser;
   }
 
-  Future<void> signIn(String email) async {
-    await auth.sendSignInLinkToEmail(
-      email: email,
-      actionCodeSettings: actionCodeSettings,
-    );
+  Future<UserCredential?> signInWithGoogle() async {
+    try {
+      UserCredential userCredential;
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('emailForSignIn', email);
-  }
+      googleAuthProvider.addScope('email');
+      googleAuthProvider.setCustomParameters({'prompt': 'select_account'});
 
-  Future<void> completeEmailLinkSignIn() async {
-    final link = Uri.base.toString();
+      userCredential = await FirebaseAuth.instance.signInWithPopup(
+        googleAuthProvider,
+      );
 
-    if (!auth.isSignInWithEmailLink(link)) return;
-
-    final prefs = await SharedPreferences.getInstance();
-    final email = prefs.getString('emailForSignIn');
-
-    if (email == null) return;
-
-    await auth.signInWithEmailLink(email: email, emailLink: link);
-
-    await prefs.remove('emailForSignIn');
-  }
-
-  Future<void> signOut() async {
-    await auth.signOut();
+      return userCredential;
+    } catch (e) {
+      return null;
+    }
   }
 
   @override
@@ -72,10 +61,16 @@ class _AuthServiceState extends State<AuthService> {
         }
 
         if (snapshot.hasData) {
-          return const PartnerSetupScreen();
+          final user = snapshot.data;
+
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            handleUserDocument(user);
+          });
+
+          return const AppRouter();
         }
 
-        return LoginScreen(onLogin: signIn);
+        return LoginScreen(onLogin: signInWithGoogle);
       },
     );
   }

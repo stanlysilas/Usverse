@@ -14,6 +14,7 @@ dependencies:
   firebase_auth: ^6.1.4
   firebase_core: ^4.4.0
   flutter_launcher_icons: ^0.14.4
+  google_sign_in: ^7.2.0
   shared_preferences: ^2.5.4
 
 dev_dependencies:
@@ -26,3 +27,5 @@ flutter:
 
   assets:
     - assets/app_icons/
+    - assets/auth_providers/
+    - assets/illustrations/
