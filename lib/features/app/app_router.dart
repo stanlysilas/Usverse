@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:usverse/features/home/home_screen.dart';
 import 'package:usverse/features/relationship/relationship_setup_screen.dart';
 import 'package:usverse/features/relationship/waiting_for_partner_screen.dart';
+import 'package:usverse/features/settings/settings_screen.dart';
 import 'package:usverse/features/setup/partner_setup_screen.dart';
+import 'package:usverse/shared/layout/responsive_scaffold.dart';
 
 class AppRouter extends StatelessWidget {
   const AppRouter({super.key});
@@ -22,6 +24,7 @@ class AppRouter extends StatelessWidget {
       stream: userDoc,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
+          debugPrint('userDoc is loading');
           return Scaffold(body: Center(child: CircularProgressIndicator()));
         }
 
@@ -48,12 +51,16 @@ class AppRouter extends StatelessWidget {
             final status = relData['status'] ?? 'waiting';
 
             switch (status) {
+              case 'creating':
+                return const PartnerSetupScreen();
               case 'waiting':
                 return const WaitingForPartnerScreen();
               case 'setup':
                 return const RelationshipSetupScreen();
               case 'active':
-                return const HomeScreen();
+                return ResponsiveScaffold(
+                  pages: [const HomeScreen(), SettingsScreen()],
+                );
               default:
                 return const PartnerSetupScreen();
             }

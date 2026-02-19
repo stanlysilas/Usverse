@@ -7,7 +7,7 @@ import 'core/env/environment.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  AppConfig.env = Environment.dev;
+  AppConfig.env = Environment.prod;
 
   await Firebase.initializeApp(options: AppConfig.firebaseOptions);
 
@@ -19,6 +19,12 @@ class UsverseApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'Usverse', home: AuthService());
+    return MaterialApp(
+      themeMode: ThemeMode.system,
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      title: 'Usverse',
+      home: AuthService(),
+    );
   }
 }

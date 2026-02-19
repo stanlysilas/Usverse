@@ -1,0 +1,192 @@
+import 'dart:async';
+
+import 'package:confetti/confetti.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:usverse/core/utils/date_functions.dart';
+import 'package:usverse/models/countdown_model.dart';
+import 'package:usverse/models/relationship_model.dart';
+
+class AnniversaryCountdownCard extends StatefulWidget {
+  final Relationship relationship;
+  const AnniversaryCountdownCard({super.key, required this.relationship});
+
+  @override
+  State<AnniversaryCountdownCard> createState() =>
+      _AnniversaryCountdownCardState();
+}
+
+class _AnniversaryCountdownCardState extends State<AnniversaryCountdownCard> {
+  late DateTime nextAnniversary;
+  late String years;
+  late Timer timer;
+  late ConfettiController confettiController;
+  bool hasCelebrated = false;
+  Duration remaining = Duration.zero;
+
+  @override
+  void initState() {
+    super.initState();
+
+    nextAnniversary = DateFunctions().getNextAnniversary(
+      widget.relationship.anniversaryDate,
+    );
+    years = DateFunctions().yearsUntilNextAnniversary(
+      widget.relationship.anniversaryDate,
+    );
+
+    updateCountdown();
+
+    timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (_) => updateCountdown(),
+    );
+
+    confettiController = ConfettiController(
+      duration: const Duration(seconds: 5),
+    );
+
+    checkAndCelebrate();
+  }
+
+  void updateCountdown() {
+    final newRemaining = DateFunctions().timeUntil(nextAnniversary);
+
+    if (!hasCelebrated && newRemaining.inSeconds <= 0) {
+      hasCelebrated = true;
+      confettiController.play();
+    }
+
+    setState(() {
+      remaining = newRemaining;
+    });
+  }
+
+  Future<void> checkAndCelebrate() async {
+    if (!DateFunctions().isAnniversaryToday(
+      widget.relationship.anniversaryDate,
+    )) {
+      return;
+    }
+
+    // final prefs = await SharedPreferences.getInstance();
+
+    final todayKey =
+        "celebrated_${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}";
+
+    // final alreadyCelebrated = prefs.getBool(todayKey) ?? false;
+
+    // if (!alreadyCelebrated) {
+    confettiController.play();
+    //   await prefs.setBool(todayKey, true);
+    // }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer.cancel();
+    confettiController.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final parts = splitDuration(remaining);
+
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
+        ConfettiWidget(
+          confettiController: confettiController,
+          blastDirectionality: BlastDirectionality.explosive,
+          shouldLoop: false,
+          emissionFrequency: 0.05,
+          numberOfParticles: 25,
+          gravity: 0.2,
+        ),
+
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 16.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  spacing: 8,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Icon(
+                        Icons.calendar_month,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                    Text(
+                      'Anniversary Countdown ',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const Divider(),
+                const SizedBox(height: 12),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    timeBlock(parts.days, "Days"),
+                    timeBlock(parts.hours, "Hours"),
+                    timeBlock(parts.minutes, "Minutes"),
+                    timeBlock(parts.seconds, "Seconds"),
+                  ],
+                ),
+
+                const SizedBox(height: 12),
+                Text(years, style: TextStyle(fontSize: 16)),
+
+                const SizedBox(height: 12),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget timeBlock(int value, String label) {
+    return Expanded(
+      child: Container(
+        margin: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: Theme.of(context).colorScheme.primaryContainer,
+        ),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  value.toString().padLeft(2, '0'),
+                  style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            Text(label),
+          ],
+        ),
+      ),
+    );
+  }
+}

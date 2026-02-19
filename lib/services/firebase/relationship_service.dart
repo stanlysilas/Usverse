@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:usverse/models/relationship_model.dart';
 
 class RelationshipService {
   final db = FirebaseFirestore.instance;
@@ -45,7 +46,10 @@ class RelationshipService {
         return "ALREADY_CONNECTED";
       }
 
-      transaction.update(relationshipRef, {'partnerB': user.uid});
+      transaction.update(relationshipRef, {
+        'partnerB': user.uid,
+        'status': 'setup',
+      });
 
       transaction.update(userRef, {'relationshipId': relationshipRef.id});
 
@@ -53,7 +57,7 @@ class RelationshipService {
     });
   }
 
-  Future<String?> createInviteCode() async {
+  Future<(String code, String relationshipId)> createInviteCode() async {
     final user = auth.currentUser!;
     final userRef = db.collection('users').doc(user.uid);
 
@@ -61,7 +65,7 @@ class RelationshipService {
     final existingRelationship = userSnap.data()?['relationshipId'];
 
     if (existingRelationship != null) {
-      return null;
+      return ('', '');
     }
 
     final code = await generateInviteCode();
@@ -70,12 +74,11 @@ class RelationshipService {
       'partnerA': user.uid,
       'partnerB': null,
       'inviteCode': code,
+      'status': 'waiting',
       'createdAt': FieldValue.serverTimestamp(),
     });
 
-    await userRef.update({'relationshipId': relationshipRef.id});
-
-    return code;
+    return (code, relationshipRef.id);
   }
 
   Future<String> generateInviteCode() async {
@@ -98,5 +101,80 @@ class RelationshipService {
         return code;
       }
     }
+  }
+
+  Future<void> saveRelationshipDetails(
+    String relationshipId,
+    String relationshipName,
+    DateTime anniversaryDate,
+    String? partnerANickname,
+    String? partnerBNickname,
+  ) async {
+    final user = auth.currentUser!;
+
+    final doc = await db.collection('relationships').doc(relationshipId).get();
+
+    final partnerBUid = doc.data()?['partnerB'];
+
+    await db.collection('relationships').doc(relationshipId).update({
+      'relationshipName': relationshipName,
+      'anniversaryDate': anniversaryDate,
+      'nicknames': {user.uid: partnerANickname, partnerBUid: partnerBNickname},
+      'status': 'active',
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<String?> getCurrentUserRelationshipId() async {
+    final user = auth.currentUser;
+
+    if (user == null) return null;
+
+    final doc = await db.collection('users').doc(user.uid).get();
+
+    final data = doc.data();
+
+    return data!['relationshipId'];
+  }
+
+  Future<Relationship?> fetchRelationship(String relationshipId) async {
+    final doc = await db.collection('relationships').doc(relationshipId).get();
+
+    if (!doc.exists) return null;
+
+    return Relationship.fromFirestore(doc);
+  }
+
+  Stream<Relationship?> watchRelationship(String relationshipId) {
+    return db.collection('relationships').doc(relationshipId).snapshots().map((
+      doc,
+    ) {
+      if (!doc.exists) return null;
+
+      return Relationship.fromFirestore(doc);
+    });
+  }
+
+  Future<void> updateRelationshipDetails({
+    required String relationshipId,
+    required String relationshipName,
+    required DateTime anniversaryDate,
+    required Map<String, dynamic> nicknames,
+  }) async {
+    await db.collection('relationships').doc(relationshipId).update({
+      'relationshipName': relationshipName.trim(),
+      'anniversaryDate': anniversaryDate,
+      'nicknames': nicknames,
+      'status': 'active',
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> attachUserToRelationship(String relationshipId) async {
+    final user = auth.currentUser!;
+
+    await db.collection('users').doc(user.uid).update({
+      'relationshipId': relationshipId,
+    });
   }
 }

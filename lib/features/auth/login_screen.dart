@@ -35,7 +35,9 @@ class LoginScreen extends StatelessWidget {
                 message: 'Sign in with Google',
                 authProviders: AuthProviders.google,
                 boxDecoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.inverseSurface,
+                  ),
                   borderRadius: BorderRadius.circular(100),
                 ),
               ),

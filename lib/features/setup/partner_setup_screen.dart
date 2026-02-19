@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:usverse/features/relationship/waiting_for_partner_screen.dart';
 import 'package:usverse/services/firebase/relationship_service.dart';
 import 'package:usverse/shared/submit_button.dart';
 
@@ -17,219 +16,278 @@ class _PartnerSetupScreenState extends State<PartnerSetupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/illustrations/partner_setup.png', scale: 4),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset('assets/illustrations/partner_setup.png', scale: 4),
 
-              Icon(Icons.favorite_border_rounded, color: Colors.redAccent),
+                Icon(Icons.favorite_border_rounded, color: Colors.redAccent),
 
-              const SizedBox(height: 12),
+                const SizedBox(height: 12),
 
-              Text(
-                'Add your partner',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              Text('Connect with your partner to get started'),
+                Text(
+                  'Add your partner',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                Text('Connect with your partner to get started'),
 
-              const SizedBox(height: 24),
+                const SizedBox(height: 24),
 
-              SizedBox(
-                width: 400,
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8.0,
-                      vertical: 4.0,
-                    ),
-                    child: Row(
-                      spacing: 4,
-                      children: [
-                        Icon(Icons.key),
-                        const SizedBox(width: 6),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Enter invite code',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 800),
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 16.0,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Row(
+                            spacing: 12,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: Icon(
+                                  Icons.key,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 250,
-                              child: TextField(
-                                controller: inviteCodeController,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                spacing: 8,
+                                children: [
+                                  Text(
+                                    'Enter Invite Code',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      minWidth: 200,
+                                      maxWidth: 400,
+                                    ),
+                                    child: TextField(
+                                      controller: inviteCodeController,
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
 
-                        Flexible(
-                          child: SubmitButton(
+                          SubmitButton(
                             color: Colors.deepOrange,
                             onSubmit: () async {
                               final relationshipService = RelationshipService();
-                              final result = await relationshipService
-                                  .joinWithInviteCode(
-                                    inviteCodeController.text.trim(),
-                                  );
+                              if (inviteCodeController.text.trim().isNotEmpty) {
+                                final result = await relationshipService
+                                    .joinWithInviteCode(
+                                      inviteCodeController.text.trim(),
+                                    );
 
-                              if (result == null) {
-                                debugPrint('Joined succesfully');
-                                return;
-                              }
-
-                              String message = switch (result) {
-                                "INVALID_CODE" => "Invalid invite code.",
-                                "SELF_JOIN" =>
-                                  "You cannot join your own invite.",
-                                "ALREADY_CONNECTED" =>
-                                  "This relationship already has two partners.",
-                                "ALREADY_IN_RELATIONSHIP" =>
-                                  "You are already connected.",
-                                _ => "Something went wrong.",
-                              };
-
-                              showDialog(
-                                context: context,
-                                builder: (_) => AlertDialog(
-                                  title: const Text("Unable to connect"),
-                                  content: Text(message),
-                                ),
-                              );
-                            },
-                            message: 'Connect',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-              Container(
-                width: 350,
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: Row(
-                  spacing: 4,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(child: Divider()),
-                    Text('OR'),
-                    Expanded(child: Divider()),
-                  ],
-                ),
-              ),
-
-              SizedBox(
-                width: 400,
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8.0,
-                      vertical: 4.0,
-                    ),
-                    child: Row(
-                      spacing: 4,
-                      children: [
-                        Icon(Icons.link),
-                        const SizedBox(width: 6),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Create invite code',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Text(
-                              'Generate and share an invite code with your partner.',
-                            ),
-
-                            const SizedBox(height: 8),
-                            SubmitButton(
-                              color: Colors.deepPurple,
-                              onSubmit: () async {
-                                final relationshipService =
-                                    RelationshipService();
-                                final code = await relationshipService
-                                    .createInviteCode();
-
-                                if (code == null) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (_) => AlertDialog(
-                                      title: Text('Invite code already exists'),
-                                      content: Text(
-                                        'You already created or joined a relationship.',
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text('Close'),
-                                        ),
-                                      ],
-                                    ),
-                                  );
+                                if (result == null) {
+                                  debugPrint('Joined succesfully');
                                   return;
                                 }
 
-                                await showDialog(
-                                  context: context,
-                                  builder: (_) => AlertDialog(
-                                    title: const Text('Invite Code'),
-                                    content: SelectableText(
-                                      code,
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                String message = switch (result) {
+                                  "INVALID_CODE" => "Invalid invite code.",
+                                  "SELF_JOIN" =>
+                                    "You cannot join your own invite.",
+                                  "ALREADY_CONNECTED" =>
+                                    "This relationship already has two partners.",
+                                  "ALREADY_IN_RELATIONSHIP" =>
+                                    "You are already connected.",
+                                  _ => "Something went wrong.",
+                                };
+
+                                if (context.mounted) {
+                                  showDialog(
+                                    context: context,
+                                    useRootNavigator: true,
+                                    builder: (_) => AlertDialog(
+                                      title: const Text("Unable to connect"),
+                                      content: Text(message),
                                     ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () async {
-                                          await Clipboard.setData(
-                                            ClipboardData(text: code),
-                                          );
-
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'Code copied to clipboard',
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        child: Text('Copy'),
-                                      ),
-                                    ],
-                                  ),
+                                  );
+                                }
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Enter a valid code')),
                                 );
-
-                                debugPrint('Invite code created: $code');
-                              },
-                              message: 'Create invite code',
-                            ),
-                          ],
-                        ),
-                      ],
+                              }
+                            },
+                            message: 'Connect',
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 16),
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 800),
+                  child: Row(
+                    spacing: 4,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(child: Divider()),
+                      Text('  OR  '),
+                      Expanded(child: Divider()),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 800),
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 16.0,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Row(
+                            spacing: 12,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: Icon(
+                                  Icons.link,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
+                                ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                spacing: 8,
+                                children: [
+                                  Text(
+                                    'Create Invite Code',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Generate and share an invite code with your partner.',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+
+                                  const SizedBox(height: 12),
+                                ],
+                              ),
+                            ],
+                          ),
+
+                          SubmitButton(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primaryContainer,
+                            onSubmit: () async {
+                              final relationshipService = RelationshipService();
+
+                              final result = await relationshipService
+                                  .createInviteCode();
+
+                              if (!mounted) return;
+
+                              if (result == ('', '')) {
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => const AlertDialog(
+                                    title: Text('Invite code already exists'),
+                                    content: Text(
+                                      'You already created or joined a relationship.',
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              final (code, relationshipId) = result;
+
+                              await showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  title: const Text('Invite Code'),
+                                  content: SelectableText(
+                                    code,
+                                    style: const TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Clipboard.setData(
+                                          ClipboardData(text: code),
+                                        );
+
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Code copied to clipboard',
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: const Text('Copy'),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              await relationshipService
+                                  .attachUserToRelationship(relationshipId);
+                            },
+
+                            message: 'Create Invite Code',
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
