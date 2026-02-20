@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usverse/core/utils/date_functions.dart';
 import 'package:usverse/models/countdown_model.dart';
 import 'package:usverse/models/relationship_model.dart';
@@ -71,8 +71,8 @@ class _AnniversaryCountdownCardState extends State<AnniversaryCountdownCard> {
 
     // final prefs = await SharedPreferences.getInstance();
 
-    final todayKey =
-        "celebrated_${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}";
+    // final todayKey =
+    //     "celebrated_${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}";
 
     // final alreadyCelebrated = prefs.getBool(todayKey) ?? false;
 
