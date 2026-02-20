@@ -42,7 +42,11 @@ class _RelationshipSetupScreenState extends State<RelationshipSetupScreen> {
                   scale: 4,
                 ),
 
-                Icon(Icons.favorite_border_rounded, color: Colors.redAccent),
+                Icon(
+                  Icons.favorite_border_rounded,
+                  color: Colors.redAccent,
+                  size: 48,
+                ),
 
                 Text(
                   'Set up your relationship',

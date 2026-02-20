@@ -18,7 +18,11 @@ class LoginScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.favorite_border_rounded, color: Colors.redAccent),
+              Icon(
+                Icons.favorite_border_rounded,
+                color: Colors.redAccent,
+                size: 48,
+              ),
 
               const SizedBox(height: 12),
 

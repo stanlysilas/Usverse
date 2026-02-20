@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:usverse/services/firebase/relationship_service.dart';
@@ -11,11 +12,22 @@ class PartnerSetupScreen extends StatefulWidget {
 }
 
 class _PartnerSetupScreenState extends State<PartnerSetupScreen> {
+  final auth = FirebaseAuth.instance;
   final TextEditingController inviteCodeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              auth.signOut();
+            },
+            icon: Icon(Icons.logout),
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),

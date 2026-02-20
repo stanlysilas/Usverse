@@ -54,7 +54,7 @@ class AppRouter extends StatelessWidget {
               case 'creating':
                 return const PartnerSetupScreen();
               case 'waiting':
-                return const WaitingForPartnerScreen();
+                return WaitingForPartnerScreen(relationshipId: relationshipId);
               case 'setup':
                 return const RelationshipSetupScreen();
               case 'active':
