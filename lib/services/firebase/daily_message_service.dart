@@ -14,6 +14,8 @@ class DailyMessageService {
     required String relationshipId,
     required String text,
     required DateTime startAt,
+    required String userDisplayName,
+    required String userPhotoUrl,
   }) async {
     final user = FirebaseAuth.instance.currentUser!;
 
@@ -23,10 +25,14 @@ class DailyMessageService {
 
     await doc.set({
       'relationshipId': relationshipId,
-      'createdBy': user.uid,
       'message': text,
-      'startAt': Timestamp.fromDate(startAt),
-      'expiresAt': Timestamp.fromDate(expiresAt),
+      'startAt': startAt,
+      'expiresAt': expiresAt,
+
+      'senderId': user.uid,
+      'senderDisplayName': userDisplayName,
+      'senderPhotoUrl': userPhotoUrl,
+
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
@@ -47,5 +53,27 @@ class DailyMessageService {
 
       return null;
     });
+  }
+
+  Stream<List<DailyMessage>> watchMessagesForDate(
+    String relationshipId,
+    DateTime date,
+  ) {
+    final startOfDay = DateTime(date.year, date.month, date.day);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+
+    return messagesRef(relationshipId)
+        .where(
+          'startAt',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay),
+        )
+        .where('startAt', isLessThan: Timestamp.fromDate(endOfDay))
+        .orderBy('startAt')
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => DailyMessage.fromFirestore(doc))
+              .toList(),
+        );
   }
 }

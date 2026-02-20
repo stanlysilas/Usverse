@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usverse/core/utils/date_functions.dart';
 import 'package:usverse/models/countdown_model.dart';
 import 'package:usverse/models/relationship_model.dart';
@@ -68,18 +67,7 @@ class _AnniversaryCountdownCardState extends State<AnniversaryCountdownCard> {
     )) {
       return;
     }
-
-    // final prefs = await SharedPreferences.getInstance();
-
-    // final todayKey =
-    //     "celebrated_${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}";
-
-    // final alreadyCelebrated = prefs.getBool(todayKey) ?? false;
-
-    // if (!alreadyCelebrated) {
     confettiController.play();
-    //   await prefs.setBool(todayKey, true);
-    // }
   }
 
   @override
@@ -152,7 +140,13 @@ class _AnniversaryCountdownCardState extends State<AnniversaryCountdownCard> {
                 ),
 
                 const SizedBox(height: 12),
-                Text(years, style: TextStyle(fontSize: 16)),
+                DateFunctions().isAnniversaryToday(
+                      widget.relationship.anniversaryDate,
+                    )
+                    ? Text(
+                        'Happy Anniversary to ${widget.relationship.relationshipName} ❤️',
+                      )
+                    : Text(years, style: TextStyle(fontSize: 16)),
 
                 const SizedBox(height: 12),
               ],

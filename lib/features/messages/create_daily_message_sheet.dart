@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:usverse/services/firebase/daily_message_service.dart';
@@ -16,6 +18,8 @@ class _CreateDailyMessageSheetState extends State<CreateDailyMessageSheet> {
   final DailyMessageService messageService = DailyMessageService();
   final RelationshipService relationshipService = RelationshipService();
   final TextEditingController messageController = TextEditingController();
+
+  final user = FirebaseAuth.instance.currentUser!;
 
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
@@ -76,10 +80,19 @@ class _CreateDailyMessageSheetState extends State<CreateDailyMessageSheet> {
         throw Exception("No relationship found");
       }
 
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      final userData = userDoc.data()!;
+
       await messageService.createMessage(
         relationshipId: relationshipId,
         text: messageController.text.trim(),
         startAt: scheduledDateTime!,
+        userDisplayName: userData['displayName'] ?? '',
+        userPhotoUrl: userData['photoUrl'] ?? '',
       );
 
       if (!mounted) return;

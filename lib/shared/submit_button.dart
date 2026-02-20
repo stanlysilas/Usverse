@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-class SubmitButton extends StatelessWidget {
-  final Function() onSubmit;
+class SubmitButton extends StatefulWidget {
+  final Future<void> Function() onSubmit;
   final String message;
   final Color color;
+
   const SubmitButton({
     super.key,
     required this.onSubmit,
@@ -12,18 +13,48 @@ class SubmitButton extends StatelessWidget {
   });
 
   @override
+  State<SubmitButton> createState() => _SubmitButtonState();
+}
+
+class _SubmitButtonState extends State<SubmitButton> {
+  bool isLoading = false;
+
+  Future<void> _handleTap() async {
+    if (isLoading) return;
+
+    setState(() => isLoading = true);
+
+    try {
+      await widget.onSubmit();
+    } finally {
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(100),
-      onTap: onSubmit,
+      onTap: isLoading ? null : _handleTap,
       child: Container(
-        padding: EdgeInsets.all(12),
+        padding: const EdgeInsets.all(12),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: color,
+          color: isLoading ? widget.color.withAlpha(120) : widget.color,
           borderRadius: BorderRadius.circular(100),
         ),
-        child: Text(message),
+        child: isLoading
+            ? const SizedBox(
+                height: 18,
+                width: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+            : Text(widget.message),
       ),
     );
   }

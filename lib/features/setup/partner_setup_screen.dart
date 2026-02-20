@@ -38,7 +38,11 @@ class _PartnerSetupScreenState extends State<PartnerSetupScreen> {
               children: [
                 Image.asset('assets/illustrations/partner_setup.png', scale: 4),
 
-                Icon(Icons.favorite_border_rounded, color: Colors.redAccent),
+                Icon(
+                  Icons.favorite_border_rounded,
+                  color: Colors.redAccent,
+                  size: 48,
+                ),
 
                 const SizedBox(height: 12),
 
@@ -59,6 +63,7 @@ class _PartnerSetupScreenState extends State<PartnerSetupScreen> {
                         vertical: 16.0,
                       ),
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -79,6 +84,7 @@ class _PartnerSetupScreenState extends State<PartnerSetupScreen> {
                                 ),
                               ),
                               Column(
+                                mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 spacing: 8,
                                 children: [
@@ -90,10 +96,7 @@ class _PartnerSetupScreenState extends State<PartnerSetupScreen> {
                                     ),
                                   ),
                                   ConstrainedBox(
-                                    constraints: BoxConstraints(
-                                      minWidth: 200,
-                                      maxWidth: 400,
-                                    ),
+                                    constraints: BoxConstraints(maxWidth: 250),
                                     child: TextField(
                                       controller: inviteCodeController,
                                       decoration: InputDecoration(

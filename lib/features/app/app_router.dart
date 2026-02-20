@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:usverse/features/home/home_screen.dart';
 import 'package:usverse/features/relationship/relationship_setup_screen.dart';
 import 'package:usverse/features/relationship/waiting_for_partner_screen.dart';
-import 'package:usverse/features/settings/settings_screen.dart';
+import 'package:usverse/features/us/us_screen.dart';
 import 'package:usverse/features/setup/partner_setup_screen.dart';
 import 'package:usverse/shared/layout/responsive_scaffold.dart';
 
@@ -56,10 +56,10 @@ class AppRouter extends StatelessWidget {
               case 'waiting':
                 return WaitingForPartnerScreen(relationshipId: relationshipId);
               case 'setup':
-                return const RelationshipSetupScreen();
+                return RelationshipSetupScreen(relationshipId: relationshipId);
               case 'active':
                 return ResponsiveScaffold(
-                  pages: [const HomeScreen(), SettingsScreen()],
+                  pages: [const HomeScreen(), UsScreen()],
                 );
               default:
                 return const PartnerSetupScreen();

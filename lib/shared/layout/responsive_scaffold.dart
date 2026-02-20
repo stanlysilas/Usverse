@@ -40,17 +40,18 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                 //   label: Text('Memories'),
                 // ),
                 NavigationRailDestination(
-                  icon: Icon(Icons.settings),
-                  label: Text('Settings'),
+                  icon: Icon(Icons.favorite_rounded),
+                  label: Text('Us'),
                 ),
               ],
               trailing: FloatingActionButton.extended(
                 onPressed: () => showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
+                  showDragHandle: true,
                   builder: (_) => const CreateDailyMessageSheet(),
                 ),
-                label: Icon(Icons.add_rounded),
+                label: Icon(Icons.mail_rounded),
               ),
             ),
 
@@ -85,8 +86,8 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                 //   label: 'Memories',
                 // ),
                 NavigationDestination(
-                  icon: Icon(Icons.settings),
-                  label: 'Settings',
+                  icon: Icon(Icons.favorite_rounded),
+                  label: 'Us',
                 ),
               ],
             ),
