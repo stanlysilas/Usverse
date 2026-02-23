@@ -44,7 +44,7 @@ class DateFunctions {
 
     final upcomingYear = yearsCompleted + 1;
 
-    return "Approaching your ${ordinal(upcomingYear)} year  together ❤️";
+    return "Approaching your ${ordinal(upcomingYear)} year together ❤️";
   }
 
   String ordinal(int number) {

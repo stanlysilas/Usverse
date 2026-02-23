@@ -7,7 +7,7 @@ import 'core/env/environment.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  AppConfig.env = Environment.prod;
+  AppConfig.env = Environment.dev;
 
   await Firebase.initializeApp(options: AppConfig.firebaseOptions);
 

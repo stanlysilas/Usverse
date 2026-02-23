@@ -76,4 +76,8 @@ class DailyMessageService {
               .toList(),
         );
   }
+
+  Future<void> deleteMessage(String messageId, String relationshipId) async {
+    await messagesRef(relationshipId).doc(messageId).delete();
+  }
 }

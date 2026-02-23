@@ -23,49 +23,78 @@ class AppRouter extends StatelessWidget {
     return StreamBuilder<DocumentSnapshot>(
       stream: userDoc,
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          debugPrint('userDoc is loading');
-          return Scaffold(body: Center(child: CircularProgressIndicator()));
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          debugPrint('userDoc not found');
+          return Scaffold(body: Center(child: Text('Fetching your data')));
         }
 
-        final data = snapshot.data!.data() as Map<String, dynamic>;
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(body: Center(child: Text('Loading Usverse')));
+        }
 
+        final rawData = snapshot.data!.data();
+
+        if (rawData == null) {
+          return const Scaffold(
+            body: Center(child: Text('Initializing your data')),
+          );
+        }
+
+        final data = rawData as Map<String, dynamic>;
         final relationshipId = data['relationshipId'];
+
+        if (data.isEmpty) {
+          return Scaffold(body: Center(child: Text('Data is missing')));
+        }
 
         if (relationshipId == null) {
           return const PartnerSetupScreen();
-        }
-
-        return StreamBuilder<DocumentSnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('relationships')
-              .doc(relationshipId)
-              .snapshots(),
-          builder: (context, relSnap) {
-            if (!relSnap.hasData) {
-              return Scaffold(body: Center(child: CircularProgressIndicator()));
-            }
-
-            final relData = relSnap.data!.data() as Map<String, dynamic>;
-
-            final status = relData['status'] ?? 'waiting';
-
-            switch (status) {
-              case 'creating':
-                return const PartnerSetupScreen();
-              case 'waiting':
-                return WaitingForPartnerScreen(relationshipId: relationshipId);
-              case 'setup':
-                return RelationshipSetupScreen(relationshipId: relationshipId);
-              case 'active':
-                return ResponsiveScaffold(
-                  pages: [const HomeScreen(), UsScreen()],
+        } else {
+          return StreamBuilder<DocumentSnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('relationships')
+                .doc(relationshipId)
+                .snapshots(),
+            builder: (context, relSnap) {
+              if (!relSnap.hasData || !relSnap.data!.exists) {
+                return Scaffold(
+                  body: Center(child: Text('Loading your relationship')),
                 );
-              default:
-                return const PartnerSetupScreen();
-            }
-          },
-        );
+              }
+
+              final relRaw = relSnap.data!.data();
+
+              if (relRaw == null) {
+                return const Scaffold(
+                  body: Center(child: Text('Preparing your relationship')),
+                );
+              }
+
+              final relData = relRaw as Map<String, dynamic>;
+              final status = relData['status'] ?? 'waiting';
+
+              switch (status) {
+                case 'creating':
+                  return const PartnerSetupScreen();
+                case 'waiting':
+                  return WaitingForPartnerScreen(
+                    relationshipId: relationshipId,
+                  );
+                case 'setup':
+                  return RelationshipSetupScreen(
+                    relationshipId: relationshipId,
+                  );
+                case 'active':
+                  return ResponsiveScaffold(
+                    relationshipId: relationshipId,
+                    pages: [const HomeScreen(), UsScreen()],
+                  );
+                default:
+                  return const PartnerSetupScreen();
+              }
+            },
+          );
+        }
       },
     );
   }

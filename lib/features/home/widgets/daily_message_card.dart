@@ -1,9 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:usverse/models/daily_message_model.dart';
+import 'package:usverse/services/firebase/daily_message_service.dart';
 
 class DailyMessageCard extends StatelessWidget {
   final DailyMessage message;
-  const DailyMessageCard({super.key, required this.message});
+  DailyMessageCard({super.key, required this.message});
+
+  final auth = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +31,34 @@ class DailyMessageCard extends StatelessWidget {
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
                 ),
-                Text(
-                  "Today's Message",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Expanded(
+                  child: Text(
+                    "Today's Message",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                 ),
+
+                if (message.senderId == auth.uid)
+                  IconButton(
+                    onPressed: () {
+                      DailyMessageService().deleteMessage(
+                        message.id,
+                        message.relationshipId,
+                      );
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Message deleted succesfully')),
+                      );
+
+                      debugPrint(
+                        'User tapped on delete message: ${message.message}',
+                      );
+                    },
+                    icon: Icon(
+                      Icons.delete_rounded,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
               ],
             ),
             const Divider(),

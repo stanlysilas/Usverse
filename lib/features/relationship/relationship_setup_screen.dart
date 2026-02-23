@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:usverse/core/crypto/relationship_key_provider.dart';
 import 'package:usverse/core/utils/date_functions.dart';
 import 'package:usverse/services/firebase/relationship_service.dart';
-import 'package:usverse/shared/date_picker.dart';
+import 'package:usverse/shared/pickers/date_time_pickers.dart';
 import 'package:usverse/shared/submit_button.dart';
 
 class RelationshipSetupScreen extends StatefulWidget {
@@ -22,7 +23,7 @@ class _RelationshipSetupScreenState extends State<RelationshipSetupScreen> {
       TextEditingController();
   final TextEditingController partnerBNicknameController =
       TextEditingController();
-  DateTime? anniversaryDate;
+  DateTime anniversaryDate = DateTime.now();
   String formattedDate = 'dd-MM-yyyy';
 
   final auth = FirebaseAuth.instance;
@@ -40,6 +41,7 @@ class _RelationshipSetupScreenState extends State<RelationshipSetupScreen> {
         actions: [
           IconButton(
             onPressed: () {
+              RelationshipKeyProvider.instance.clear();
               auth.signOut();
             },
             icon: Icon(Icons.logout),
@@ -148,20 +150,22 @@ class _RelationshipSetupScreenState extends State<RelationshipSetupScreen> {
                                     ),
                                     IconButton(
                                       onPressed: () async {
-                                        await pickDate(context, DateTime.now(), (
-                                          picked,
-                                        ) async {
-                                          final String date =
-                                              await DateFunctions()
-                                                  .formatDateToString(picked);
-                                          setState(() {
-                                            formattedDate = date;
-                                            anniversaryDate = picked;
-                                          });
-                                          debugPrint(
-                                            'User selected date: $anniversaryDate',
-                                          );
+                                        anniversaryDate = await pickDate(
+                                          context,
+                                          anniversaryDate,
+                                        );
+
+                                        final String date =
+                                            await DateFunctions()
+                                                .formatDateToString(
+                                                  anniversaryDate,
+                                                );
+                                        setState(() {
+                                          formattedDate = date;
                                         });
+                                        debugPrint(
+                                          'User selected date: $anniversaryDate',
+                                        );
                                       },
                                       icon: Icon(Icons.date_range_rounded),
                                     ),
@@ -224,7 +228,7 @@ class _RelationshipSetupScreenState extends State<RelationshipSetupScreen> {
                                             relationshipId,
                                             relationshipNameController.text
                                                 .trim(),
-                                            anniversaryDate!,
+                                            anniversaryDate,
                                             partnerANicknameController.text
                                                 .trim(),
                                             partnerBNicknameController.text

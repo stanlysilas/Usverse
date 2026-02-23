@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MemoryModel {
-  final String id;
+  final String memoryId;
   final String relationshipId;
   final String createdBy;
 
+  final String nonce;
+  final String mac;
+
   final String mediaUrl;
-  final String? thumbnailUrl;
   final String type;
   final String? caption;
 
@@ -19,11 +21,12 @@ class MemoryModel {
   final bool isDeleted;
 
   MemoryModel({
-    required this.id,
+    required this.memoryId,
     required this.relationshipId,
     required this.createdBy,
+    required this.nonce,
+    required this.mac,
     required this.mediaUrl,
-    this.thumbnailUrl,
     required this.type,
     this.caption,
     required this.memoryDate,
@@ -37,9 +40,11 @@ class MemoryModel {
     final data = doc.data() as Map<String, dynamic>;
 
     return MemoryModel(
-      id: doc.id,
+      memoryId: doc.id,
       relationshipId: data['relationshipId'],
       createdBy: data['createdBy'],
+      nonce: data['nonce'],
+      mac: data['mac'],
       mediaUrl: data['mediaUrl'],
       type: data['type'],
       caption: data['caption'],
@@ -58,7 +63,8 @@ class MemoryModel {
       'relationshipId': relationshipId,
       'createdBy': createdBy,
       'mediaUrl': mediaUrl,
-      'thumbnailUrl': thumbnailUrl,
+      'nonce': nonce,
+      'mac': mac,
       'type': type,
       'caption': caption,
       'memoryDate': Timestamp.fromDate(memoryDate),

@@ -84,15 +84,6 @@ class _AnniversaryCountdownCardState extends State<AnniversaryCountdownCard> {
     return Stack(
       alignment: Alignment.topCenter,
       children: [
-        ConfettiWidget(
-          confettiController: confettiController,
-          blastDirectionality: BlastDirectionality.explosive,
-          shouldLoop: false,
-          emissionFrequency: 0.05,
-          numberOfParticles: 25,
-          gravity: 0.2,
-        ),
-
         Card(
           child: Padding(
             padding: const EdgeInsets.symmetric(
@@ -153,6 +144,15 @@ class _AnniversaryCountdownCardState extends State<AnniversaryCountdownCard> {
             ),
           ),
         ),
+
+        ConfettiWidget(
+          confettiController: confettiController,
+          blastDirectionality: BlastDirectionality.explosive,
+          shouldLoop: false,
+          emissionFrequency: 0.05,
+          numberOfParticles: 25,
+          gravity: 0.2,
+        ),
       ],
     );
   }
@@ -164,20 +164,29 @@ class _AnniversaryCountdownCardState extends State<AnniversaryCountdownCard> {
         padding: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: Theme.of(context).colorScheme.primaryContainer,
+          color: Theme.of(context).colorScheme.secondaryContainer,
         ),
         child: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  value.toString().padLeft(2, '0'),
-                  style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+                Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      value.toString().padLeft(2, '0'),
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 48,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
-            Text(label),
+            FittedBox(fit: BoxFit.scaleDown, child: Text(label, maxLines: 1)),
           ],
         ),
       ),

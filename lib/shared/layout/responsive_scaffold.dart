@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:usverse/features/memories/widgets/create_memory_sheet.dart';
 import 'package:usverse/features/messages/create_daily_message_sheet.dart';
+import 'package:usverse/models/create_action_item.dart';
+import 'package:usverse/shared/sheets/create_action_sheet.dart';
 
 class ResponsiveScaffold extends StatefulWidget {
   final List<Widget> pages;
-  const ResponsiveScaffold({super.key, required this.pages});
+  final String relationshipId;
+  const ResponsiveScaffold({
+    super.key,
+    required this.pages,
+    required this.relationshipId,
+  });
 
   @override
   State<ResponsiveScaffold> createState() => _ResponsiveScaffoldState();
@@ -35,40 +43,59 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                   icon: Icon(Icons.home_rounded),
                   label: Text('Home'),
                 ),
-                // NavigationRailDestination(
-                //   icon: Icon(Icons.favorite_rounded),
-                //   label: Text('Memories'),
-                // ),
                 NavigationRailDestination(
                   icon: Icon(Icons.favorite_rounded),
                   label: Text('Us'),
                 ),
               ],
-              trailing: FloatingActionButton.extended(
-                onPressed: () => showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  showDragHandle: true,
-                  builder: (_) => const CreateDailyMessageSheet(),
-                ),
-                label: Icon(Icons.mail_rounded),
-              ),
             ),
 
           Expanded(child: widget.pages[selectedIndex]),
         ],
       ),
-      floatingActionButton: useRail
-          ? null
-          : FloatingActionButton.small(
-              onPressed: () => showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (_) => const CreateDailyMessageSheet(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          showDragHandle: true,
+          useSafeArea: true,
+          builder: (_) => CreateActionSheet(
+            items: [
+              CreateActionItem(
+                leading: Icon(Icons.schedule_send_rounded),
+                title: 'Daily Message',
+                subtitle: 'Schedule a message for 24 hours',
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    showDragHandle: true,
+                    useSafeArea: true,
+                    builder: (_) => const CreateDailyMessageSheet(),
+                  );
+                },
               ),
-              child: Icon(Icons.add_rounded),
-            ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+              CreateActionItem(
+                leading: Icon(Icons.collections_rounded),
+                title: 'Memory',
+                subtitle: 'Save a moment together',
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    showDragHandle: true,
+                    useSafeArea: true,
+                    builder: (_) => CreateMemorySheet(
+                      relationshipId: widget.relationshipId,
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+        child: Icon(Icons.add_rounded),
+      ),
       bottomNavigationBar: useRail
           ? null
           : NavigationBar(
@@ -81,10 +108,6 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                   icon: Icon(Icons.home_rounded),
                   label: 'Home',
                 ),
-                // NavigationDestination(
-                //   icon: Icon(Icons.favorite_rounded),
-                //   label: 'Memories',
-                // ),
                 NavigationDestination(
                   icon: Icon(Icons.favorite_rounded),
                   label: 'Us',

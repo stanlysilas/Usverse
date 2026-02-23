@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:usverse/services/firebase/daily_message_service.dart';
 import 'package:usverse/services/firebase/relationship_service.dart';
+import 'package:usverse/shared/pickers/date_time_pickers.dart';
 import 'package:usverse/shared/submit_button.dart';
+import 'package:usverse/shared/widgets/usverse_list_tile.dart';
 
 class CreateDailyMessageSheet extends StatefulWidget {
   const CreateDailyMessageSheet({super.key});
@@ -40,28 +42,12 @@ class _CreateDailyMessageSheetState extends State<CreateDailyMessageSheet> {
     );
   }
 
-  Future<void> pickDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-    );
+  @override
+  void initState() {
+    super.initState();
 
-    if (picked != null) {
-      setState(() => selectedDate = picked);
-    }
-  }
-
-  Future<void> pickTime() async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-
-    if (picked != null) {
-      setState(() => selectedTime = picked);
-    }
+    selectedDate = DateTime.now();
+    selectedTime = TimeOfDay.now();
   }
 
   Future<void> submit() async {
@@ -111,8 +97,6 @@ class _CreateDailyMessageSheetState extends State<CreateDailyMessageSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.only(
@@ -128,9 +112,7 @@ class _CreateDailyMessageSheetState extends State<CreateDailyMessageSheet> {
             children: [
               Text(
                 "Daily Message 💌",
-                style: theme.textTheme.titleLarge!.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
 
               const SizedBox(height: 16),
@@ -150,26 +132,32 @@ class _CreateDailyMessageSheetState extends State<CreateDailyMessageSheet> {
 
               const SizedBox(height: 16),
 
-              ListTile(
-                contentPadding: EdgeInsets.zero,
+              UsverseListTile(
                 leading: const Icon(Icons.calendar_today_rounded),
-                title: Text(
-                  selectedDate == null
-                      ? "Select date"
-                      : DateFormat.yMMMMd().format(selectedDate!),
-                ),
-                onTap: pickDate,
+                title: selectedDate == null
+                    ? "Select date"
+                    : DateFormat.yMMMMd().format(selectedDate!),
+
+                onTap: () async {
+                  selectedDate = await pickDate(context, selectedDate!);
+
+                  setState(() {});
+                },
               ),
 
-              ListTile(
-                contentPadding: EdgeInsets.zero,
+              UsverseListTile(
                 leading: const Icon(Icons.access_time_rounded),
-                title: Text(
-                  selectedTime == null
-                      ? "Select time"
-                      : selectedTime!.format(context),
-                ),
-                onTap: pickTime,
+                title: selectedTime == null
+                    ? "Select time"
+                    : selectedTime!.format(context),
+
+                onTap: () async {
+                  selectedDate = await pickTime(context, selectedDate!);
+
+                  setState(() {
+                    selectedTime = TimeOfDay.fromDateTime(selectedDate!);
+                  });
+                },
               ),
 
               const SizedBox(height: 12),
@@ -178,7 +166,9 @@ class _CreateDailyMessageSheetState extends State<CreateDailyMessageSheet> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(

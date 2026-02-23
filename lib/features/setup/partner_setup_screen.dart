@@ -241,7 +241,7 @@ class _PartnerSetupScreenState extends State<PartnerSetupScreen> {
 
                               if (!mounted) return;
 
-                              if (result == ('', '')) {
+                              if (result == ('', '') && context.mounted) {
                                 showDialog(
                                   context: context,
                                   builder: (_) => const AlertDialog(
@@ -256,39 +256,41 @@ class _PartnerSetupScreenState extends State<PartnerSetupScreen> {
 
                               final (code, relationshipId) = result;
 
-                              await showDialog(
-                                context: context,
-                                builder: (_) => AlertDialog(
-                                  title: const Text('Invite Code'),
-                                  content: SelectableText(
-                                    code,
-                                    style: const TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
+                              if (context.mounted) {
+                                await showDialog(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: const Text('Invite Code'),
+                                    content: SelectableText(
+                                      code,
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Clipboard.setData(
-                                          ClipboardData(text: code),
-                                        );
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Clipboard.setData(
+                                            ClipboardData(text: code),
+                                          );
 
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                              'Code copied to clipboard',
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Code copied to clipboard',
+                                              ),
                                             ),
-                                          ),
-                                        );
-                                      },
-                                      child: const Text('Copy'),
-                                    ),
-                                  ],
-                                ),
-                              );
+                                          );
+                                        },
+                                        child: const Text('Copy'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
 
                               await relationshipService
                                   .attachUserToRelationship(relationshipId);

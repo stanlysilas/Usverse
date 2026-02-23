@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:usverse/core/crypto/relationship_key_provider.dart';
+import 'package:usverse/services/firebase/relationship_service.dart';
 
 class WaitingForPartnerScreen extends StatelessWidget {
   final String relationshipId;
@@ -23,6 +25,7 @@ class WaitingForPartnerScreen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
+              RelationshipKeyProvider.instance.clear();
               auth.signOut();
             },
             icon: Icon(Icons.logout),
@@ -93,7 +96,7 @@ class WaitingForPartnerScreen extends StatelessWidget {
 
                           const SizedBox(height: 12),
 
-                          TextButton(
+                          TextButton.icon(
                             onPressed: () {
                               Clipboard.setData(
                                 ClipboardData(text: inviteCode),
@@ -103,25 +106,37 @@ class WaitingForPartnerScreen extends StatelessWidget {
                                 const SnackBar(content: Text('Code copied')),
                               );
                             },
-                            child: const Text('Copy Code'),
+                            icon: Icon(Icons.copy_rounded),
+                            label: const Text('Copy Code'),
                           ),
 
-                          TextButton(
+                          const SizedBox(height: 12),
+
+                          TextButton.icon(
                             onPressed: () {
                               SharePlus.instance.share(
                                 ShareParams(
                                   text:
-                                      'Join me on Usverse ❤️ Code: $inviteCode',
+                                      'Join me on Usverse with code: $inviteCode. Login to Usverse: https://usverse-platform.web.app',
                                 ),
                               );
                             },
-                            child: const Text('Share Code'),
+                            icon: Icon(Icons.share_rounded),
+                            label: const Text('Share Code'),
                           ),
                         ],
                       ),
                     ),
                   ),
                 ],
+                const SizedBox(height: 12),
+                TextButton.icon(
+                  onPressed: () {
+                    RelationshipService().deleteRelationship(relationshipId);
+                  },
+                  icon: Icon(Icons.delete_rounded),
+                  label: Text('Delete Invite Code'),
+                ),
               ],
             ),
           );

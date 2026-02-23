@@ -15,25 +15,32 @@ class MemoriesService {
         .collection('memories');
   }
 
-  Future<void> createMemory(MemoryModel memory) async {
-    final docRef = memoriesRef(memory.relationshipId).doc();
+  Future<void> createEncryptedMemory({
+    required String relationshipId,
+    required String mediaUrl,
+    required String nonce,
+    required String mac,
+    required String caption,
+    required DateTime memoryDate,
+    required DateTime sortDate,
+  }) async {
+    final docRef = memoriesRef(relationshipId).doc();
 
-    final newMemory = MemoryModel(
-      id: docRef.id,
-      relationshipId: memory.relationshipId,
-      createdBy: currentUser.uid,
-      mediaUrl: memory.mediaUrl,
-      thumbnailUrl: memory.thumbnailUrl,
-      type: memory.type,
-      caption: memory.caption,
-      memoryDate: memory.memoryDate,
-      sortDate: memory.sortDate,
-      createdAt: DateTime.now(),
-      updatedAt: null,
-      isDeleted: false,
-    );
-
-    await docRef.set(newMemory.toFirestore());
+    await docRef.set({
+      'relationshipId': relationshipId,
+      'memoryId': docRef.id,
+      'createdBy': currentUser.uid,
+      'mediaUrl': mediaUrl,
+      'nonce': nonce,
+      'mac': mac,
+      'type': 'image',
+      'caption': caption,
+      'memoryDate': Timestamp.fromDate(memoryDate),
+      'sortDate': Timestamp.fromDate(sortDate),
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': null,
+      'isDeleted': false,
+    });
   }
 
   Stream<List<MemoryModel>> watchMemories(String relationshipId) {
@@ -41,11 +48,11 @@ class MemoriesService {
         .where('isDeleted', isEqualTo: false)
         .orderBy('sortDate', descending: true)
         .snapshots()
-        .map((snapshot) {
-          return snapshot.docs
+        .map(
+          (snapshot) => snapshot.docs
               .map((doc) => MemoryModel.fromFirestore(doc))
-              .toList();
-        });
+              .toList(),
+        );
   }
 
   Future<List<MemoryModel>> fetchMemories(

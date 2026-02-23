@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:usverse/core/crypto/relationship_key_provider.dart';
 import 'package:usverse/features/us/widgets/relationship_details_card.dart';
 
 class UsScreen extends StatelessWidget {
@@ -134,7 +135,10 @@ class UsScreen extends StatelessWidget {
                             ListTile(
                               leading: const Icon(Icons.logout_rounded),
                               title: const Text('Log out of Usverse'),
-                              onTap: () => auth.signOut(),
+                              onTap: () {
+                                RelationshipKeyProvider.instance.clear();
+                                auth.signOut();
+                              },
                             ),
 
                             const Spacer(),
@@ -201,10 +205,10 @@ class OverlappingAvatars extends StatelessWidget {
             : CachedNetworkImage(
                 imageUrl: url,
                 fit: BoxFit.cover,
-                placeholder: (_, __) => const Center(
+                placeholder: (_, _) => const Center(
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
-                errorWidget: (_, __, ___) => const Icon(Icons.person),
+                errorWidget: (_, _, _) => const Icon(Icons.person),
               ),
       ),
     );

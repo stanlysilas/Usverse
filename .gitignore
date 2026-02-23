@@ -43,3 +43,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# These are not needed for now
+/ios/
+/android/
+
+# These are cryptographic files that should never be included
+/lib/core/crypto/

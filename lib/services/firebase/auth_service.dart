@@ -23,7 +23,11 @@ class _AuthServiceState extends State<AuthService> {
   Future<void> handleUserDocument(User? user) async {
     if (userInitialized) return;
 
+    debugPrint("User not yet initialized");
+
     userInitialized = true;
+
+    debugPrint("User succesfully initialized");
 
     await firestoreService.createOrUpdateUser(user!);
   }
@@ -43,8 +47,14 @@ class _AuthServiceState extends State<AuthService> {
         googleAuthProvider,
       );
 
+      debugPrint('Completed Google Sign-in: ${userCredential.user!.email}');
+
+      handleUserDocument(userCredential.user!);
+
+      debugPrint('User creation completed');
       return userCredential;
     } catch (e) {
+      debugPrint('Encountered an error while Google Sign-in: ${e.toString()}');
       return null;
     }
   }
@@ -52,25 +62,32 @@ class _AuthServiceState extends State<AuthService> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
-      stream: authStateChanges,
+      stream: auth.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
-            body: Center(child: const CircularProgressIndicator()),
+          return const Scaffold(
+            body: Center(child: Text('Authenticating with your details')),
           );
         }
 
-        if (snapshot.hasData) {
-          final user = snapshot.data;
+        final user = snapshot.data;
 
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            handleUserDocument(user);
-          });
-
-          return const AppRouter();
+        if (user == null) {
+          return LoginScreen(onLogin: signInWithGoogle);
         }
 
-        return LoginScreen(onLogin: signInWithGoogle);
+        return FutureBuilder(
+          future: firestoreService.createOrUpdateUser(user),
+          builder: (context, initSnapshot) {
+            if (initSnapshot.connectionState != ConnectionState.done) {
+              return const Scaffold(
+                body: Center(child: Text('Preparing your account')),
+              );
+            }
+
+            return const AppRouter();
+          },
+        );
       },
     );
   }

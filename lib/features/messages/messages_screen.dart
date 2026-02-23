@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:usverse/models/daily_message_model.dart';
@@ -46,19 +47,36 @@ class MessagesScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final message = messages[index];
 
-                  // final isMe =
-                  //     message.senderId ==
-                  //     FirebaseAuth.instance.currentUser!.uid;
+                  final isMe =
+                      message.senderId ==
+                      FirebaseAuth.instance.currentUser!.uid;
 
-                  final isActive =
-                      DateTime.now().isAfter(message.startAt) &&
-                      DateTime.now().isBefore(message.expiresAt);
+                  // final isActive =
+                  //     DateTime.now().isAfter(message.startAt) &&
+                  //     DateTime.now().isBefore(message.expiresAt);
 
                   return Card(
-                    color: isActive
+                    color: isMe
                         ? Theme.of(context).colorScheme.primaryContainer
                         : null,
-                    margin: const EdgeInsets.symmetric(vertical: 6),
+                    margin: isMe
+                        ? EdgeInsets.only(top: 6, bottom: 6, left: 48)
+                        : EdgeInsets.only(top: 6, bottom: 6, right: 48),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: isMe
+                          ? BorderRadius.only(
+                              topLeft: Radius.circular(24.0),
+                              topRight: Radius.circular(24.0),
+                              bottomLeft: Radius.circular(24.0),
+                              bottomRight: Radius.circular(0),
+                            )
+                          : BorderRadius.only(
+                              topLeft: Radius.circular(24.0),
+                              topRight: Radius.circular(24.0),
+                              bottomLeft: Radius.circular(0),
+                              bottomRight: Radius.circular(24.0),
+                            ),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16.0,
@@ -103,12 +121,44 @@ class MessagesScreen extends StatelessWidget {
 
                           const SizedBox(height: 8),
 
-                          Text(
-                            _formatTime(message.startAt),
-                            style: TextStyle(
-                              color: Colors.grey.shade600,
-                              fontSize: 13,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                _formatTime(message.startAt),
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 13,
+                                ),
+                              ),
+
+                              if (isMe)
+                                IconButton(
+                                  onPressed: () {
+                                    DailyMessageService().deleteMessage(
+                                      message.id,
+                                      relationshipId,
+                                    );
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Message deleted succesfully',
+                                        ),
+                                      ),
+                                    );
+
+                                    debugPrint(
+                                      'User tapped on delete message: ${message.message}',
+                                    );
+                                  },
+                                  icon: Icon(
+                                    size: 18,
+                                    Icons.delete_rounded,
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                                ),
+                            ],
                           ),
                         ],
                       ),

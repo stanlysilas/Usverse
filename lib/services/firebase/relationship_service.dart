@@ -2,9 +2,12 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:usverse/core/crypto/crypto_service.dart';
 import 'package:usverse/models/relationship_model.dart';
 
 class RelationshipService {
+  final relationshipKey = CryptoService.generateRelationshipKey();
+
   final db = FirebaseFirestore.instance;
   final auth = FirebaseAuth.instance;
 
@@ -76,6 +79,12 @@ class RelationshipService {
       'inviteCode': code,
       'status': 'waiting',
       'createdAt': FieldValue.serverTimestamp(),
+
+      'crypto': {
+        'key': relationshipKey,
+        'version': 1,
+        'createdAt': FieldValue.serverTimestamp(),
+      },
     });
 
     return (code, relationshipRef.id);
@@ -146,13 +155,27 @@ class RelationshipService {
   }
 
   Stream<Relationship?> watchRelationship(String relationshipId) {
-    return db.collection('relationships').doc(relationshipId).snapshots().map((
-      doc,
-    ) {
-      if (!doc.exists) return null;
+    return db
+        .collection('relationships')
+        .doc(relationshipId)
+        .snapshots()
+        .asyncMap((doc) async {
+          if (!doc.exists) return null;
 
-      return Relationship.fromFirestore(doc);
-    });
+          final data = doc.data()!;
+
+          if (data['crypto'] == null) {
+            await ensureCryptoSetup(relationshipId);
+
+            final updated = await db
+                .collection('relationships')
+                .doc(relationshipId)
+                .get();
+            return Relationship.fromFirestore(updated);
+          }
+
+          return Relationship.fromFirestore(doc);
+        });
   }
 
   Future<void> updateRelationshipDetails({
@@ -175,6 +198,37 @@ class RelationshipService {
 
     await db.collection('users').doc(user.uid).update({
       'relationshipId': relationshipId,
+    });
+  }
+
+  Future<void> deleteRelationship(String relationshipId) async {
+    final user = auth.currentUser!;
+
+    await db.collection('relationships').doc(relationshipId).delete();
+
+    await db.collection('users').doc(user.uid).update({'relationshipId': null});
+  }
+
+  /// This method ensures that the crypto setup is properly done and all
+  /// existing relationships are migrated to include this crypto [Map] in
+  /// [FirebaseFirestore].
+  Future<void> ensureCryptoSetup(String relationshipId) async {
+    final ref = db.collection('relationships').doc(relationshipId);
+
+    final snap = await ref.get();
+
+    if (!snap.exists) return;
+
+    final data = snap.data()!;
+
+    if (data['crypto'] != null) return;
+
+    await ref.update({
+      'crypto': {
+        'key': relationshipKey,
+        'version': 1,
+        'createdAt': FieldValue.serverTimestamp(),
+      },
     });
   }
 }
