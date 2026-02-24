@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:usverse/services/firebase/daily_message_service.dart';
 import 'package:usverse/services/firebase/relationship_service.dart';
 import 'package:usverse/shared/pickers/date_time_pickers.dart';
-import 'package:usverse/shared/submit_button.dart';
+import 'package:usverse/shared/widgets/buttons/usverse_button.dart';
 import 'package:usverse/shared/widgets/usverse_list_tile.dart';
 
 class CreateDailyMessageSheet extends StatefulWidget {
@@ -134,10 +134,11 @@ class _CreateDailyMessageSheetState extends State<CreateDailyMessageSheet> {
 
               UsverseListTile(
                 leading: const Icon(Icons.calendar_today_rounded),
+                extended: true,
                 title: selectedDate == null
                     ? "Select date"
                     : DateFormat.yMMMMd().format(selectedDate!),
-
+                selected: false,
                 onTap: () async {
                   selectedDate = await pickDate(context, selectedDate!);
 
@@ -147,10 +148,11 @@ class _CreateDailyMessageSheetState extends State<CreateDailyMessageSheet> {
 
               UsverseListTile(
                 leading: const Icon(Icons.access_time_rounded),
+                extended: true,
                 title: selectedTime == null
                     ? "Select time"
                     : selectedTime!.format(context),
-
+                selected: false,
                 onTap: () async {
                   selectedDate = await pickTime(context, selectedDate!);
 
@@ -186,7 +188,7 @@ class _CreateDailyMessageSheetState extends State<CreateDailyMessageSheet> {
 
               const SizedBox(height: 20),
 
-              SubmitButton(
+              UsverseButton(
                 message: "Schedule Message",
                 onSubmit: submit,
                 color: Theme.of(context).colorScheme.primaryContainer,

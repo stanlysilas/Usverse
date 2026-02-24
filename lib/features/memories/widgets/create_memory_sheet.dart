@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:usverse/features/memories/services/memory_upload_service.dart';
 import 'package:usverse/services/firebase/memories_service.dart';
 import 'package:usverse/shared/pickers/date_time_pickers.dart';
-import 'package:usverse/shared/submit_button.dart';
+import 'package:usverse/shared/widgets/buttons/usverse_button.dart';
 import 'package:usverse/shared/widgets/usverse_list_tile.dart';
 
 class CreateMemorySheet extends StatefulWidget {
@@ -143,10 +143,11 @@ class _CreateMemorySheetState extends State<CreateMemorySheet> {
 
             UsverseListTile(
               leading: const Icon(Icons.calendar_today_rounded),
+              extended: true,
               title: selectedDateTime == null
                   ? "Select date"
                   : DateFormat.yMMMMd().format(selectedDateTime!),
-
+              selected: false,
               onTap: () async {
                 selectedDateTime = await pickDate(context, selectedDateTime!);
 
@@ -156,10 +157,11 @@ class _CreateMemorySheetState extends State<CreateMemorySheet> {
 
             UsverseListTile(
               leading: const Icon(Icons.access_time_rounded),
+              extended: true,
               title: selectedTime == null
                   ? "Select time"
                   : selectedTime!.format(context),
-
+              selected: false,
               onTap: () async {
                 selectedDateTime = await pickTime(context, selectedDateTime!);
 
@@ -193,7 +195,7 @@ class _CreateMemorySheetState extends State<CreateMemorySheet> {
 
             const SizedBox(height: 20),
 
-            SubmitButton(
+            UsverseButton(
               onSubmit: submit,
               message: 'Save Memory',
               color: Theme.of(context).colorScheme.primaryContainer,

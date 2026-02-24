@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:usverse/features/app/app_router.dart';
-import 'package:usverse/features/auth/login_screen.dart';
+import 'package:usverse/features/auth/screens/login_screen.dart';
 import 'package:usverse/services/firebase/firestore_service.dart';
 
 class AuthService extends StatefulWidget {
@@ -73,7 +73,11 @@ class _AuthServiceState extends State<AuthService> {
         final user = snapshot.data;
 
         if (user == null) {
-          return LoginScreen(onLogin: signInWithGoogle);
+          return LoginScreen(
+            onLogin: () async {
+              await signInWithGoogle();
+            },
+          );
         }
 
         return FutureBuilder(

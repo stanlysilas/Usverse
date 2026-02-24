@@ -5,7 +5,7 @@ import 'package:usverse/core/crypto/relationship_key_provider.dart';
 import 'package:usverse/core/utils/date_functions.dart';
 import 'package:usverse/services/firebase/relationship_service.dart';
 import 'package:usverse/shared/pickers/date_time_pickers.dart';
-import 'package:usverse/shared/submit_button.dart';
+import 'package:usverse/shared/widgets/buttons/usverse_button.dart';
 
 class RelationshipSetupScreen extends StatefulWidget {
   final String relationshipId;
@@ -210,7 +210,7 @@ class _RelationshipSetupScreenState extends State<RelationshipSetupScreen> {
 
                                 const SizedBox(height: 12),
 
-                                SubmitButton(
+                                UsverseButton(
                                   onSubmit: () async {
                                     final user = auth.currentUser!;
                                     if (relationshipNameController

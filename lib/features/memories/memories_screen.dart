@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:usverse/core/crypto/encryption_service.dart';
 import 'package:usverse/core/crypto/relationship_key_provider.dart';
-import 'package:usverse/shared/submit_button.dart';
+import 'package:usverse/shared/widgets/buttons/usverse_button.dart';
 import 'package:usverse/shared/widgets/usverse_list_tile.dart';
 
 class MemoriesScreen extends StatefulWidget {
@@ -23,7 +23,7 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
         children: [
           ConstrainedBox(
             constraints: BoxConstraints(maxWidth: 800),
-            child: SubmitButton(
+            child: UsverseButton(
               onSubmit: () async {
                 final key = await RelationshipKeyProvider.instance.getKey();
 
@@ -50,6 +50,8 @@ class _MemoriesScreenState extends State<MemoriesScreen> {
 
           UsverseListTile(
             title: 'Usverse List Tile',
+            selected: false,
+            extended: true,
             onTap: () {
               debugPrint('Selected Usverse ListTile');
             },

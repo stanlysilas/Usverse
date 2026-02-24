@@ -107,6 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 relationship: relationship,
                                 relationshipId: relationshipId,
                               ),
+                              const SizedBox(height: 20),
                               RightColumn(relationshipId: relationshipId),
                             ],
                           ),

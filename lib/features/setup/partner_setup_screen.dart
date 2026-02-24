@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:usverse/services/firebase/relationship_service.dart';
-import 'package:usverse/shared/submit_button.dart';
+import 'package:usverse/shared/widgets/buttons/usverse_button.dart';
 
 class PartnerSetupScreen extends StatefulWidget {
   const PartnerSetupScreen({super.key});
@@ -114,7 +114,7 @@ class _PartnerSetupScreenState extends State<PartnerSetupScreen> {
                           ),
                           const SizedBox(height: 12),
 
-                          SubmitButton(
+                          UsverseButton(
                             color: Colors.deepOrange,
                             onSubmit: () async {
                               final relationshipService = RelationshipService();
@@ -229,7 +229,7 @@ class _PartnerSetupScreenState extends State<PartnerSetupScreen> {
                             ],
                           ),
 
-                          SubmitButton(
+                          UsverseButton(
                             color: Theme.of(
                               context,
                             ).colorScheme.primaryContainer,

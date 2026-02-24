@@ -18,6 +18,7 @@ dependencies:
   firebase_core: ^4.4.0
   flutter_image_compress: ^2.4.0
   flutter_launcher_icons: ^0.14.4
+  flutter_svg: ^2.2.3
   google_sign_in: ^7.2.0
   http: ^1.6.0
   image_picker: ^1.2.1
@@ -39,3 +40,4 @@ flutter:
     - assets/app_icons/
     - assets/auth_providers/
     - assets/illustrations/
+    - assets/logos/

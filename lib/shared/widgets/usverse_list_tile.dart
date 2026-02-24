@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 class UsverseListTile extends StatefulWidget {
   final Widget? leading;
   final String title;
-  final TextStyle? titleTextStyle;
   final String? subtitle;
-  final TextStyle? subtitleTextStyle;
-  final bool initiallySelected;
+  final bool selected;
+  final bool extended;
   final VoidCallback? onTap;
   final Color? foregroundColor;
   final Color? backgroundColor;
@@ -19,10 +18,9 @@ class UsverseListTile extends StatefulWidget {
     super.key,
     this.leading,
     required this.title,
-    this.titleTextStyle,
     this.subtitle,
-    this.subtitleTextStyle,
-    this.initiallySelected = false,
+    required this.selected,
+    required this.extended,
     this.onTap,
     this.foregroundColor,
     this.backgroundColor,
@@ -38,81 +36,86 @@ class UsverseListTile extends StatefulWidget {
 
 class _UsverseListTileState extends State<UsverseListTile> {
   bool _hovered = false;
-  late bool _selected;
-
-  @override
-  void initState() {
-    super.initState();
-    _selected = widget.initiallySelected;
-  }
-
-  void _handleTap() {
-    setState(() {
-      _selected = !_selected;
-    });
-
-    widget.onTap?.call();
-  }
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    final Color backgroundColor = _selected
+    final backgroundColor = widget.selected
         ? (widget.selectedColor ?? colors.surfaceContainerHigh)
         : _hovered
         ? (widget.backgroundColor ?? colors.surfaceContainerHighest)
         : Colors.transparent;
 
-    final Color foregroundColor =
+    final foregroundColor =
         widget.foregroundColor ??
-        (_selected ? colors.onPrimaryContainer : colors.onSurface);
+        (widget.selected ? colors.onPrimaryContainer : colors.onSurface);
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
+        onTap: widget.onTap,
         behavior: HitTestBehavior.opaque,
-        onTap: _handleTap,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
+          duration: const Duration(milliseconds: 100),
           curve: Curves.easeOut,
           margin: widget.margin ?? const EdgeInsets.symmetric(vertical: 4),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          padding:
+              widget.padding ??
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Row(
-            children: [
-              if (widget.leading != null) ...[
-                widget.leading!,
-                const SizedBox(width: 12),
-              ],
-
-              Expanded(
-                child: Text(
-                  widget.title,
-                  style:
-                      widget.titleTextStyle ??
-                      TextStyle(
-                        fontWeight: _selected
-                            ? FontWeight.w500
-                            : FontWeight.w400,
-                        color: foregroundColor,
-                      ),
-                ),
-              ),
-
-              if (widget.trailing != null) ...[
-                const SizedBox(width: 12),
-                widget.trailing!,
-              ],
-            ],
-          ),
+          child: widget.extended
+              ? _extendedLayout(foregroundColor)
+              : _collapsedLayout(),
         ),
       ),
     );
+  }
+
+  Widget _extendedLayout(Color foregroundColor) {
+    return Row(
+      children: [
+        if (widget.leading != null) ...[
+          Flexible(child: widget.leading!),
+          const SizedBox(width: 12),
+        ],
+        Flexible(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.title,
+                overflow: TextOverflow.fade,
+                style: TextStyle(
+                  fontWeight: widget.selected
+                      ? FontWeight.w500
+                      : FontWeight.w400,
+                  color: foregroundColor,
+                ),
+              ),
+              if (widget.subtitle != null)
+                Text(
+                  widget.subtitle!,
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+            ],
+          ),
+        ),
+        if (widget.trailing != null) ...[
+          const SizedBox(width: 12),
+          widget.trailing!,
+        ],
+      ],
+    );
+  }
+
+  Widget _collapsedLayout() {
+    return Center(child: widget.leading);
   }
 }

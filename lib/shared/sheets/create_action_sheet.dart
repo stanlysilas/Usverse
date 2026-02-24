@@ -37,10 +37,12 @@ class CreateActionSheet extends StatelessWidget {
                   leading: item.leading,
                   title: item.title,
                   subtitle: item.subtitle,
+                  selected: false,
                   onTap: () {
                     Navigator.pop(context);
                     item.onTap();
                   },
+                  extended: true,
                 );
               },
             ),

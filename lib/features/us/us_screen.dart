@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:usverse/core/crypto/relationship_key_provider.dart';
 import 'package:usverse/features/us/widgets/relationship_details_card.dart';
+import 'package:usverse/shared/widgets/dialogs/usverse_confirm_dialog.dart';
 
 class UsScreen extends StatelessWidget {
   UsScreen({super.key});
@@ -135,10 +136,19 @@ class UsScreen extends StatelessWidget {
                             ListTile(
                               leading: const Icon(Icons.logout_rounded),
                               title: const Text('Log out of Usverse'),
-                              onTap: () {
-                                RelationshipKeyProvider.instance.clear();
-                                auth.signOut();
-                              },
+                              onTap: () => showDialog(
+                                context: context,
+                                builder: (_) => UsverseConfirmDialog(
+                                  title: 'Are you sure you want to log out?',
+                                  message:
+                                      'Log out of Usverse as ${auth.currentUser!.email}?',
+                                  confirmText: 'Log out',
+                                  onConfirm: () {
+                                    RelationshipKeyProvider.instance.clear();
+                                    auth.signOut();
+                                  },
+                                ),
+                              ),
                             ),
 
                             const Spacer(),
