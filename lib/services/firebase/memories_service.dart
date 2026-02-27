@@ -23,6 +23,9 @@ class MemoriesService {
     required String caption,
     required DateTime memoryDate,
     required DateTime sortDate,
+    bool isMilestone = false,
+    String? icon = '❤️',
+    String? milestoneTitle,
   }) async {
     final docRef = memoriesRef(relationshipId).doc();
 
@@ -40,6 +43,9 @@ class MemoriesService {
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': null,
       'isDeleted': false,
+      'isMilestone': isMilestone,
+      'icon': icon,
+      'milestoneTitle': milestoneTitle,
     });
   }
 
@@ -98,5 +104,18 @@ class MemoriesService {
     }
 
     await memoriesRef(relationshipId).doc(memoryId).update(updates);
+  }
+
+  Stream<List<MemoryModel>> watchMilestones(String relationshipId) {
+    return memoriesRef(relationshipId)
+        .where('isDeleted', isEqualTo: false)
+        .where('isMilestone', isEqualTo: true)
+        .orderBy('sortDate')
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => MemoryModel.fromFirestore(doc))
+              .toList(),
+        );
   }
 }

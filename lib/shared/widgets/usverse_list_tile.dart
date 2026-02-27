@@ -58,20 +58,23 @@ class _UsverseListTileState extends State<UsverseListTile> {
       child: GestureDetector(
         onTap: widget.onTap,
         behavior: HitTestBehavior.opaque,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 100),
-          curve: Curves.easeOut,
-          margin: widget.margin ?? const EdgeInsets.symmetric(vertical: 4),
-          padding:
-              widget.padding ??
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(12),
+        child: Tooltip(
+          message: !widget.extended ? widget.title : '',
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 100),
+            curve: Curves.easeOut,
+            margin: widget.margin ?? const EdgeInsets.symmetric(vertical: 4),
+            padding:
+                widget.padding ??
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: widget.extended
+                ? _extendedLayout(foregroundColor)
+                : _collapsedLayout(),
           ),
-          child: widget.extended
-              ? _extendedLayout(foregroundColor)
-              : _collapsedLayout(),
         ),
       ),
     );
@@ -79,38 +82,35 @@ class _UsverseListTileState extends State<UsverseListTile> {
 
   Widget _extendedLayout(Color foregroundColor) {
     return Row(
+      spacing: 12,
       children: [
-        if (widget.leading != null) ...[
-          Flexible(child: widget.leading!),
-          const SizedBox(width: 12),
-        ],
-        Flexible(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.title,
-                overflow: TextOverflow.fade,
-                style: TextStyle(
-                  fontWeight: widget.selected
-                      ? FontWeight.w500
-                      : FontWeight.w400,
-                  color: foregroundColor,
-                ),
-              ),
-              if (widget.subtitle != null)
+        if (widget.leading != null) ...[Flexible(child: widget.leading!)],
+        if (widget.extended)
+          Flexible(
+            flex: 2,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Text(
-                  widget.subtitle!,
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  widget.title,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontWeight: widget.selected
+                        ? FontWeight.w500
+                        : FontWeight.w400,
+                    color: foregroundColor,
+                  ),
                 ),
-            ],
+                if (widget.subtitle != null)
+                  Text(
+                    widget.subtitle!,
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+              ],
+            ),
           ),
-        ),
-        if (widget.trailing != null) ...[
-          const SizedBox(width: 12),
-          widget.trailing!,
-        ],
+        if (widget.trailing != null) ...[Flexible(child: widget.trailing!)],
       ],
     );
   }

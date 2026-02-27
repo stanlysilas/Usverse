@@ -1,5 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:hugeicons/hugeicons.dart';
+import 'package:usverse/models/user_model.dart';
 import 'package:usverse/models/usverse_navigation_items.dart';
+import 'package:usverse/services/firebase/user_profile_service.dart';
 import 'package:usverse/shared/widgets/buttons/usverse_icon_button.dart';
 import 'package:usverse/shared/widgets/usverse_list_tile.dart';
 
@@ -20,7 +26,9 @@ class UsverseSidebar extends StatefulWidget {
 }
 
 class _UsverseSidebarState extends State<UsverseSidebar> {
+  final auth = FirebaseAuth.instance.currentUser!;
   bool extended = true;
+  final profileService = UserProfileService();
 
   @override
   Widget build(BuildContext context) {
@@ -51,54 +59,103 @@ class _UsverseSidebarState extends State<UsverseSidebar> {
                     ? MainAxisAlignment.spaceBetween
                     : MainAxisAlignment.center,
                 children: [
-                  if (extended)
-                    Flexible(
-                      child: UsverseIconButton(
-                        onTap: () {
-                          debugPrint(
-                            'This is a button for the app icon, placeholder for now.',
-                          );
-                        },
-                        icon: Icons.logo_dev_rounded,
-                      ),
-                    ),
-
-                  if (extended) Flexible(child: Text('Usverse')),
-
-                  if (extended) const Spacer(),
-
                   Flexible(
                     child: UsverseIconButton(
                       onTap: () {
                         setState(() => extended = !extended);
                       },
-                      icon: Icons.view_sidebar_rounded,
+                      icon: HugeIcons.strokeRoundedSidebarLeft,
                       message: extended ? 'Close sidebar' : 'Open sidebar',
                       mouseCursor: extended
                           ? SystemMouseCursors.resizeLeft
                           : SystemMouseCursors.resizeRight,
                     ),
                   ),
+
+                  if (extended)
+                    Flexible(
+                      child: ClipRect(
+                        child: AnimatedAlign(
+                          duration: const Duration(milliseconds: 100),
+                          curve: Curves.easeInOutCubic,
+                          alignment: Alignment.centerLeft,
+                          widthFactor: extended ? 1 : 0,
+                          child: SvgPicture.asset(
+                            'assets/logos/usverse_logo.svg',
+                            width: 100,
+                            colorFilter: ColorFilter.mode(
+                              Theme.of(context).colorScheme.onSurface,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  if (extended) const Spacer(),
                 ],
               ),
             ),
 
             const SizedBox(height: 12),
 
-            ...List.generate(widget.items.length, (index) {
-              final item = widget.items[index];
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: List.generate(widget.items.length, (index) {
+                    final item = widget.items[index];
 
-              return UsverseListTile(
-                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                leading: Icon(item.icon, size: 20),
-                title: extended ? item.label : '',
-                selected: widget.selectedIndex == index,
-                onTap: () => widget.onItemSelected(index),
-                extended: extended,
-              );
-            }),
+                    return UsverseListTile(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      leading: HugeIcon(
+                        icon: item.icon,
+                        color: index == widget.selectedIndex
+                            ? colors.onPrimaryContainer
+                            : null,
+                      ),
+                      title: item.label,
+                      selected: widget.selectedIndex == index,
+                      onTap: () => widget.onItemSelected(index),
+                      extended: extended,
+                      selectedColor: colors.primaryContainer.withAlpha(80),
+                    );
+                  }),
+                ),
+              ),
+            ),
+            StreamBuilder<UserModel?>(
+              stream: profileService.watchUser(auth.uid),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-            const Spacer(),
+                final user = snapshot.data;
+
+                return UsverseListTile(
+                  margin: EdgeInsets.all(8),
+                  leading: ClipRRect(
+                    borderRadius: BorderRadiusGeometry.circular(100),
+                    child: CachedNetworkImage(
+                      imageUrl: user!.photoUrl!,
+                      scale: 3,
+                    ),
+                  ),
+                  title: user.displayName,
+                  subtitle: user.email,
+                  onTap: () {
+                    debugPrint(
+                      "User Tapped on their Avatar, Navigate to their Profile Screen",
+                    );
+                  },
+                  selected: false,
+                  extended: extended,
+                );
+              },
+            ),
           ],
         ),
       ),

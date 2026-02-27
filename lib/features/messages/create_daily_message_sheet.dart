@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:usverse/services/firebase/daily_message_service.dart';
 import 'package:usverse/services/firebase/relationship_service.dart';
@@ -133,7 +134,9 @@ class _CreateDailyMessageSheetState extends State<CreateDailyMessageSheet> {
               const SizedBox(height: 16),
 
               UsverseListTile(
-                leading: const Icon(Icons.calendar_today_rounded),
+                leading: const HugeIcon(
+                  icon: HugeIcons.strokeRoundedCalendarAdd01,
+                ),
                 extended: true,
                 title: selectedDate == null
                     ? "Select date"
@@ -147,7 +150,9 @@ class _CreateDailyMessageSheetState extends State<CreateDailyMessageSheet> {
               ),
 
               UsverseListTile(
-                leading: const Icon(Icons.access_time_rounded),
+                leading: const HugeIcon(
+                  icon: HugeIcons.strokeRoundedTimeSchedule,
+                ),
                 extended: true,
                 title: selectedTime == null
                     ? "Select time"
@@ -175,7 +180,7 @@ class _CreateDailyMessageSheetState extends State<CreateDailyMessageSheet> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.schedule),
+                      const HugeIcon(icon: HugeIcons.strokeRoundedTimeSchedule),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(

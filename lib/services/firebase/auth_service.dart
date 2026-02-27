@@ -23,11 +23,7 @@ class _AuthServiceState extends State<AuthService> {
   Future<void> handleUserDocument(User? user) async {
     if (userInitialized) return;
 
-    debugPrint("User not yet initialized");
-
     userInitialized = true;
-
-    debugPrint("User succesfully initialized");
 
     await firestoreService.createOrUpdateUser(user!);
   }
@@ -47,14 +43,10 @@ class _AuthServiceState extends State<AuthService> {
         googleAuthProvider,
       );
 
-      debugPrint('Completed Google Sign-in: ${userCredential.user!.email}');
-
       handleUserDocument(userCredential.user!);
 
-      debugPrint('User creation completed');
       return userCredential;
     } catch (e) {
-      debugPrint('Encountered an error while Google Sign-in: ${e.toString()}');
       return null;
     }
   }
@@ -66,7 +58,12 @@ class _AuthServiceState extends State<AuthService> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            body: Center(child: Text('Authenticating with your details')),
+            body: Center(
+              child: Text(
+                'Authenticating with your details',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
           );
         }
 
@@ -85,7 +82,12 @@ class _AuthServiceState extends State<AuthService> {
           builder: (context, initSnapshot) {
             if (initSnapshot.connectionState != ConnectionState.done) {
               return const Scaffold(
-                body: Center(child: Text('Preparing your account')),
+                body: Center(
+                  child: Text(
+                    'Preparing your account',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
               );
             }
 

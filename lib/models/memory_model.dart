@@ -20,6 +20,10 @@ class MemoryModel {
 
   final bool isDeleted;
 
+  final bool isMilestone;
+  final String? milestoneTitle;
+  final String? icon;
+
   MemoryModel({
     required this.memoryId,
     required this.relationshipId,
@@ -34,6 +38,9 @@ class MemoryModel {
     required this.createdAt,
     this.updatedAt,
     required this.isDeleted,
+    required this.isMilestone,
+    this.icon,
+    this.milestoneTitle,
   });
 
   factory MemoryModel.fromFirestore(DocumentSnapshot doc) {
@@ -55,6 +62,9 @@ class MemoryModel {
           ? (data['updatedAt'] as Timestamp).toDate()
           : null,
       isDeleted: data['isDeleted'] ?? false,
+      isMilestone: data['isMilestone'] ?? false,
+      icon: data['icon'] ?? '❤️',
+      milestoneTitle: data['milestoneTitle'] as String?,
     );
   }
 
@@ -72,6 +82,9 @@ class MemoryModel {
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
       'isDeleted': isDeleted,
+      'isMilestone': isMilestone,
+      'icon': icon,
+      'milestoneTitle': milestoneTitle,
     };
   }
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class UsverseIconButton extends StatefulWidget {
-  final IconData icon;
+  final List<List<dynamic>> icon;
   final VoidCallback onTap;
   final double size;
   final String? message;
@@ -9,7 +10,7 @@ class UsverseIconButton extends StatefulWidget {
   final Color? foregroundColor;
   final Color? backgroundColor;
   final Color? hoverColor;
-  final MouseCursor? mouseCursor;
+  final MouseCursor mouseCursor;
 
   const UsverseIconButton({
     super.key,
@@ -45,7 +46,7 @@ class _UsverseIconButtonState extends State<UsverseIconButton> {
     final foregroundColor = widget.foregroundColor ?? colors.onSurface;
 
     return MouseRegion(
-      cursor: widget.mouseCursor!,
+      cursor: widget.mouseCursor,
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) {
         setState(() {
@@ -54,7 +55,7 @@ class _UsverseIconButtonState extends State<UsverseIconButton> {
         });
       },
       child: Tooltip(
-        message: widget.message,
+        message: widget.message ?? '',
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTapDown: (_) => setState(() => _pressed = true),
@@ -71,8 +72,8 @@ class _UsverseIconButtonState extends State<UsverseIconButton> {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
-              child: Icon(
-                widget.icon,
+              child: HugeIcon(
+                icon: widget.icon,
                 size: widget.iconSize,
                 color: foregroundColor,
               ),

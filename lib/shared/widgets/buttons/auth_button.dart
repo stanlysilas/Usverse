@@ -31,14 +31,11 @@ class _AuthButtonState extends State<AuthButton> {
 
     setState(() => isLoading = true);
 
-    debugPrint('isLoading: $isLoading');
-
     try {
       await widget.onSubmit();
     } finally {
       if (mounted) {
         setState(() => isLoading = false);
-        debugPrint('isLoading: $isLoading');
       }
     }
   }

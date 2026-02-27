@@ -8,6 +8,7 @@ class UsverseConfirmDialog extends StatelessWidget {
   final String confirmText;
   final String cancelText;
   final VoidCallback onConfirm;
+  final VoidCallback? onCancel;
 
   const UsverseConfirmDialog({
     super.key,
@@ -16,6 +17,7 @@ class UsverseConfirmDialog extends StatelessWidget {
     required this.onConfirm,
     this.confirmText = 'Confirm',
     this.cancelText = 'Cancel',
+    this.onCancel,
   });
 
   @override
@@ -59,9 +61,7 @@ class UsverseConfirmDialog extends StatelessWidget {
             const SizedBox(height: 12),
 
             UsverseButton(
-              onSubmit: () {
-                Navigator.pop(context);
-              },
+              onSubmit: onCancel ?? () {},
               message: cancelText,
               color: colors.surfaceContainer,
               useBorder: true,

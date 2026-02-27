@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:usverse/core/utils/date_functions.dart';
 import 'package:usverse/models/countdown_model.dart';
 import 'package:usverse/models/relationship_model.dart';
@@ -102,8 +103,8 @@ class _AnniversaryCountdownCardState extends State<AnniversaryCountdownCard> {
                         color: Theme.of(context).colorScheme.primary,
                         borderRadius: BorderRadius.circular(100),
                       ),
-                      child: Icon(
-                        Icons.calendar_month,
+                      child: HugeIcon(
+                        icon: HugeIcons.strokeRoundedCalendar01,
                         color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),

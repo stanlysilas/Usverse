@@ -1,7 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
+import 'package:intl/intl.dart';
 import 'package:usverse/models/daily_message_model.dart';
 import 'package:usverse/services/firebase/daily_message_service.dart';
+import 'package:usverse/shared/widgets/buttons/usverse_icon_button.dart';
 
 class DailyMessageCard extends StatelessWidget {
   final DailyMessage message;
@@ -26,8 +29,8 @@ class DailyMessageCard extends StatelessWidget {
                     color: Theme.of(context).colorScheme.primary,
                     borderRadius: BorderRadius.circular(100),
                   ),
-                  child: Icon(
-                    Icons.mail_rounded,
+                  child: HugeIcon(
+                    icon: HugeIcons.strokeRoundedMail01,
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
                 ),
@@ -39,8 +42,8 @@ class DailyMessageCard extends StatelessWidget {
                 ),
 
                 if (message.senderId == auth.uid)
-                  IconButton(
-                    onPressed: () {
+                  UsverseIconButton(
+                    onTap: () {
                       DailyMessageService().deleteMessage(
                         message.id,
                         message.relationshipId,
@@ -49,15 +52,10 @@ class DailyMessageCard extends StatelessWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Message deleted succesfully')),
                       );
-
-                      debugPrint(
-                        'User tapped on delete message: ${message.message}',
-                      );
                     },
-                    icon: Icon(
-                      Icons.delete_rounded,
-                      color: Theme.of(context).colorScheme.error,
-                    ),
+                    icon: HugeIcons.strokeRoundedDelete01,
+                    message: 'Delete',
+                    foregroundColor: Theme.of(context).colorScheme.error,
                   ),
               ],
             ),
@@ -65,6 +63,21 @@ class DailyMessageCard extends StatelessWidget {
             const SizedBox(height: 12),
 
             Text(message.message, style: TextStyle(fontSize: 16)),
+
+            const SizedBox(height: 6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "From: ${message.senderDisplayName}",
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                Text(
+                  DateFormat('h:MM a').format(message.startAt),
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ],
+            ),
           ],
         ),
       ),

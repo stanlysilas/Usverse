@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:usverse/features/auth/auth_providers.dart';
 import 'package:usverse/shared/widgets/buttons/auth_button.dart';
 
@@ -40,10 +41,10 @@ class LoginScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.favorite_rounded,
-                        color: Colors.redAccent,
+                      HugeIcon(
+                        icon: HugeIcons.strokeRoundedFavourite,
                         size: 42,
+                        color: Colors.redAccent,
                       ),
 
                       const SizedBox(height: 12),

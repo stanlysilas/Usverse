@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:usverse/models/daily_message_model.dart';
 import 'package:usverse/services/firebase/daily_message_service.dart';
@@ -13,6 +12,16 @@ class MessagesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final service = DailyMessageService();
+
+    double expiryProgress(DateTime start, DateTime end) {
+      final total = end.difference(start).inSeconds;
+      final remaining = end.difference(DateTime.now()).inSeconds;
+
+      if (total <= 0) return 0;
+      if (remaining <= 0) return 0;
+
+      return remaining / total;
+    }
 
     return Scaffold(
       appBar: AppBar(title: const Text("Today's Messages")),
@@ -40,7 +49,7 @@ class MessagesScreen extends StatelessWidget {
 
           return Center(
             child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 800),
+              constraints: BoxConstraints(maxWidth: 520),
               child: ListView.builder(
                 padding: const EdgeInsets.all(16),
                 itemCount: messages.length,
@@ -57,11 +66,11 @@ class MessagesScreen extends StatelessWidget {
 
                   return Card(
                     color: isMe
-                        ? Theme.of(context).colorScheme.primaryContainer
+                        ? Theme.of(context).colorScheme.secondaryContainer
                         : null,
                     margin: isMe
-                        ? EdgeInsets.only(top: 6, bottom: 6, left: 48)
-                        : EdgeInsets.only(top: 6, bottom: 6, right: 48),
+                        ? EdgeInsets.only(top: 6, bottom: 6, left: 72)
+                        : EdgeInsets.only(top: 6, bottom: 6, right: 72),
                     shape: RoundedRectangleBorder(
                       borderRadius: isMe
                           ? BorderRadius.only(
@@ -106,58 +115,48 @@ class MessagesScreen extends StatelessWidget {
                               Text(
                                 message.senderDisplayName,
                                 style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ],
                           ),
 
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 8),
 
                           Text(
                             message.message,
                             style: const TextStyle(fontSize: 16),
                           ),
 
-                          const SizedBox(height: 8),
-
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
                                 _formatTime(message.startAt),
-                                style: TextStyle(
-                                  color: Colors.grey.shade600,
+                                style: const TextStyle(
+                                  color: Colors.grey,
                                   fontSize: 13,
                                 ),
                               ),
-
-                              if (isMe)
-                                IconButton(
-                                  onPressed: () {
-                                    DailyMessageService().deleteMessage(
-                                      message.id,
-                                      relationshipId,
-                                    );
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'Message deleted succesfully',
-                                        ),
-                                      ),
-                                    );
-
-                                    debugPrint(
-                                      'User tapped on delete message: ${message.message}',
-                                    );
-                                  },
-                                  icon: Icon(
-                                    size: 18,
-                                    Icons.delete_rounded,
-                                    color: Theme.of(context).colorScheme.error,
+                              SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  value: expiryProgress(
+                                    message.startAt,
+                                    message.expiresAt,
                                   ),
+                                  color:
+                                      expiryProgress(
+                                            message.startAt,
+                                            message.expiresAt,
+                                          ) <
+                                          0.2
+                                      ? Colors.red
+                                      : Theme.of(context).colorScheme.primary,
                                 ),
+                              ),
                             ],
                           ),
                         ],

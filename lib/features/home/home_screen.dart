@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:usverse/features/home/widgets/anniversary_countdown_card.dart';
 import 'package:usverse/features/home/widgets/daily_message_section.dart';
 import 'package:usverse/features/home/widgets/days_together_card.dart';
-import 'package:usverse/features/memories/widgets/memories_timeline.dart';
-import 'package:usverse/features/messages/messages_screen.dart';
+import 'package:usverse/features/home/widgets/memory_timeline_card.dart';
 import 'package:usverse/features/us/widgets/relationship_details_card.dart';
-import 'package:usverse/models/memory_model.dart';
 import 'package:usverse/models/relationship_model.dart';
-import 'package:usverse/services/firebase/memories_service.dart';
+import 'package:usverse/models/user_model.dart';
 import 'package:usverse/services/firebase/relationship_service.dart';
+import 'package:usverse/services/firebase/user_profile_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -55,20 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
-                actions: [
-                  IconButton(
-                    icon: Icon(Icons.mail_rounded),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              MessagesScreen(relationshipId: relationship.id),
-                        ),
-                      );
-                    },
-                  ),
-                ],
               ),
               body: LayoutBuilder(
                 builder: (context, constraints) {
@@ -84,8 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(
-                                flex: 2,
-                                child: LeftColumn(
+                                child: _LeftColumn(
                                   relationship: relationship,
                                   relationshipId: relationshipId,
                                 ),
@@ -94,8 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               const SizedBox(width: 24),
 
                               Expanded(
-                                flex: 1,
-                                child: RightColumn(
+                                child: _RightColumn(
                                   relationshipId: relationshipId,
                                 ),
                               ),
@@ -103,19 +86,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           )
                         : Column(
                             children: [
-                              LeftColumn(
+                              _LeftColumn(
                                 relationship: relationship,
                                 relationshipId: relationshipId,
                               ),
                               const SizedBox(height: 20),
-                              RightColumn(relationshipId: relationshipId),
+                              _RightColumn(relationshipId: relationshipId),
                             ],
                           ),
                   );
 
                   return Center(
                     child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: 1200),
+                      constraints: BoxConstraints(maxWidth: 1920),
                       child: SingleChildScrollView(child: content),
                     ),
                   );
@@ -129,23 +112,19 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class LeftColumn extends StatelessWidget {
+class _LeftColumn extends StatelessWidget {
   final Relationship relationship;
   final String relationshipId;
 
-  const LeftColumn({
-    super.key,
-    required this.relationship,
-    required this.relationshipId,
-  });
+  const _LeftColumn({required this.relationship, required this.relationshipId});
 
   @override
   Widget build(BuildContext context) {
+    final userService = UserProfileService();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(height: 16),
-
         DaysTogetherCard(relationship: relationship),
 
         const SizedBox(height: 20),
@@ -154,88 +133,41 @@ class LeftColumn extends StatelessWidget {
 
         const SizedBox(height: 20),
 
-        RelationshipDetailsCard(relationshipId: relationshipId),
+        StreamBuilder<List<UserModel>>(
+          stream: userService.watchUsers([
+            relationship.partnerA,
+            if (relationship.partnerB.isNotEmpty) relationship.partnerB,
+          ]),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const SizedBox();
+            }
+
+            return RelationshipDetailsCard(
+              relationship: relationship,
+              partners: snapshot.data!,
+            );
+          },
+        ),
       ],
     );
   }
 }
 
-class RightColumn extends StatelessWidget {
+class _RightColumn extends StatelessWidget {
   final String relationshipId;
 
-  const RightColumn({super.key, required this.relationshipId});
+  const _RightColumn({required this.relationshipId});
 
   @override
   Widget build(BuildContext context) {
-    final memoriesService = MemoriesService();
-
     return Column(
       children: [
         DailyMessageSection(relationshipId: relationshipId),
 
         const SizedBox(height: 20),
 
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  spacing: 8,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: Icon(
-                        Icons.timeline_rounded,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                    ),
-                    Text(
-                      "Memory Timeline",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-
-                const Divider(),
-                const SizedBox(height: 12),
-
-                SizedBox(
-                  height: 500,
-                  child: StreamBuilder<List<MemoryModel>>(
-                    stream: memoriesService.watchMemories(relationshipId),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-
-                      if (snapshot.hasError) {
-                        debugPrint(snapshot.error.toString());
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      }
-
-                      final memories = snapshot.data!;
-
-                      if (memories.isEmpty) {
-                        return const Center(child: Text('No memories yet ❤️'));
-                      }
-
-                      return MemoriesTimeline(memories: memories);
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        MemoryTimelineCard(relationshipId: relationshipId),
       ],
     );
   }

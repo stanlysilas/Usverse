@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:usverse/features/home/home_screen.dart';
 import 'package:usverse/features/memories/widgets/create_memory_sheet.dart';
 import 'package:usverse/features/messages/create_daily_message_sheet.dart';
+import 'package:usverse/features/messages/messages_screen.dart';
 import 'package:usverse/features/us/us_screen.dart';
+import 'package:usverse/features/us/widgets/goals/create_shared_goals_dialog.dart';
 import 'package:usverse/models/create_action_item.dart';
 import 'package:usverse/models/usverse_navigation_items.dart';
 import 'package:usverse/shared/sheets/create_action_sheet.dart';
+import 'package:usverse/shared/widgets/navigation/usverse_navigation_bar.dart';
 import 'package:usverse/shared/widgets/navigation/usverse_sidebar.dart';
 
 class ResponsiveScaffold extends StatefulWidget {
-  final List<Widget> pages;
   final String relationshipId;
-  const ResponsiveScaffold({
-    super.key,
-    required this.pages,
-    required this.relationshipId,
-  });
+  const ResponsiveScaffold({super.key, required this.relationshipId});
 
   @override
   State<ResponsiveScaffold> createState() => _ResponsiveScaffoldState();
@@ -23,18 +22,6 @@ class ResponsiveScaffold extends StatefulWidget {
 
 class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
   int selectedIndex = 0;
-  final items = [
-    UsverseNavigationItem(
-      icon: Icons.home_rounded,
-      label: 'Home',
-      page: HomeScreen(),
-    ),
-    UsverseNavigationItem(
-      icon: Icons.favorite_rounded,
-      label: 'Us',
-      page: UsScreen(),
-    ),
-  ];
 
   static const double railBreakpoint = 800;
 
@@ -42,6 +29,25 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final bool useRail = width >= railBreakpoint;
+
+    final items = [
+      UsverseNavigationItem(
+        icon: HugeIcons.strokeRoundedHome01,
+        label: 'Home',
+        page: HomeScreen(),
+      ),
+      UsverseNavigationItem(
+        icon: HugeIcons.strokeRoundedMessage01,
+        label: 'Daily Messages',
+        page: MessagesScreen(relationshipId: widget.relationshipId),
+      ),
+      UsverseNavigationItem(
+        icon: HugeIcons.strokeRoundedManWoman,
+        label: 'Us',
+        page: UsScreen(),
+      ),
+    ];
+
     return Scaffold(
       body: Row(
         children: [
@@ -54,7 +60,7 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
               items: items,
             ),
 
-          Expanded(child: widget.pages[selectedIndex]),
+          Expanded(child: items[selectedIndex].page),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -66,7 +72,7 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
           builder: (_) => CreateActionSheet(
             items: [
               CreateActionItem(
-                leading: Icon(Icons.schedule_send_rounded),
+                leading: HugeIcon(icon: HugeIcons.strokeRoundedMessage01),
                 title: 'Daily Message',
                 subtitle: 'Schedule a message for 24 hours',
                 onTap: () {
@@ -80,7 +86,7 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                 },
               ),
               CreateActionItem(
-                leading: Icon(Icons.collections_rounded),
+                leading: HugeIcon(icon: HugeIcons.strokeRoundedClock01),
                 title: 'Memory',
                 subtitle: 'Save a moment together',
                 onTap: () {
@@ -95,28 +101,35 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                   );
                 },
               ),
+              CreateActionItem(
+                leading: HugeIcon(icon: HugeIcons.strokeRoundedTarget01),
+                title: 'Shared Goal',
+                subtitle: 'Create a shared goal together',
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    showDragHandle: true,
+                    useSafeArea: true,
+                    builder: (_) => CreateSharedGoalSheet(
+                      relationshipId: widget.relationshipId,
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),
-        child: Icon(Icons.add_rounded),
+        child: HugeIcon(icon: HugeIcons.strokeRoundedAdd01),
       ),
       bottomNavigationBar: useRail
           ? null
-          : NavigationBar(
-              selectedIndex: selectedIndex,
-              onDestinationSelected: (index) {
+          : UsverseNavigationBar(
+              currentIndex: selectedIndex,
+              onChanged: (index) {
                 setState(() => selectedIndex = index);
               },
-              destinations: const [
-                NavigationDestination(
-                  icon: Icon(Icons.home_rounded),
-                  label: 'Home',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.favorite_rounded),
-                  label: 'Us',
-                ),
-              ],
+              items: items,
             ),
     );
   }

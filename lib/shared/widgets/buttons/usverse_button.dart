@@ -35,9 +35,6 @@ class _UsverseButtonState extends State<UsverseButton> {
 
     try {
       await widget.onSubmit();
-      if (mounted) {
-        Navigator.pop(context);
-      }
     } finally {
       if (mounted) {
         setState(() => isLoading = false);

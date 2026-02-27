@@ -49,7 +49,7 @@ class Relationship {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toFirestore() {
     return {
       'partnerA': partnerA,
       'partnerB': partnerB,

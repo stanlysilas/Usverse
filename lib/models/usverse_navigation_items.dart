@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 class UsverseNavigationItem {
-  final IconData icon;
+  final List<List<dynamic>> icon;
   final String label;
   final Widget page;
 

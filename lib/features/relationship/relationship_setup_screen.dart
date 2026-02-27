@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:hugeicons/hugeicons.dart';
+import 'package:intl/intl.dart';
 import 'package:usverse/core/crypto/relationship_key_provider.dart';
-import 'package:usverse/core/utils/date_functions.dart';
 import 'package:usverse/services/firebase/relationship_service.dart';
 import 'package:usverse/shared/pickers/date_time_pickers.dart';
 import 'package:usverse/shared/widgets/buttons/usverse_button.dart';
+import 'package:usverse/shared/widgets/buttons/usverse_icon_button.dart';
+import 'package:usverse/shared/widgets/usverse_list_tile.dart';
 
 class RelationshipSetupScreen extends StatefulWidget {
   final String relationshipId;
@@ -23,8 +27,7 @@ class _RelationshipSetupScreenState extends State<RelationshipSetupScreen> {
       TextEditingController();
   final TextEditingController partnerBNicknameController =
       TextEditingController();
-  DateTime anniversaryDate = DateTime.now();
-  String formattedDate = 'dd-MM-yyyy';
+  DateTime? anniversaryDate;
 
   final auth = FirebaseAuth.instance;
   final db = FirebaseFirestore.instance;
@@ -37,261 +40,264 @@ class _RelationshipSetupScreenState extends State<RelationshipSetupScreen> {
         .snapshots();
 
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            onPressed: () {
-              RelationshipKeyProvider.instance.clear();
-              auth.signOut();
-            },
-            icon: Icon(Icons.logout),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: StreamBuilder(
-          stream: relationshipStream,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            final data = snapshot.data!.data() as Map<String, dynamic>;
-
-            final partnerA = data['partnerA'];
-
-            final isPartnerA = auth.currentUser!.uid == partnerA;
-
-            if (isPartnerA) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24.0,
-                  vertical: 12.0,
+      body: Stack(
+        alignment: Alignment.topLeft,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SvgPicture.asset(
+                'assets/logos/usverse_logo.svg',
+                width: 180,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.onSurface,
+                  BlendMode.srcIn,
                 ),
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/illustrations/relationship_setup.png',
-                        scale: 4,
+              ),
+
+              UsverseIconButton(
+                onTap: () {
+                  RelationshipKeyProvider.instance.clear();
+                  auth.signOut();
+                },
+                message: 'Log out',
+                icon: HugeIcons.strokeRoundedLogout01,
+              ),
+            ],
+          ),
+
+          StreamBuilder<DocumentSnapshot>(
+            stream: relationshipStream,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              final data = snapshot.data!.data() as Map<String, dynamic>;
+
+              final partnerA = data['partnerA'];
+
+              final isPartnerA = auth.currentUser!.uid == partnerA;
+
+              if (isPartnerA) {
+                return Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: 420, maxHeight: 420),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadiusGeometry.circular(24),
                       ),
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32.0,
+                            vertical: 24.0,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              HugeIcon(
+                                icon: HugeIcons.strokeRoundedFavourite,
+                                color: Colors.redAccent,
+                                size: 42,
+                              ),
 
-                      Icon(
-                        Icons.favorite_border_rounded,
-                        color: Colors.redAccent,
-                        size: 48,
-                      ),
+                              const SizedBox(height: 12),
 
-                      const SizedBox(height: 12),
-
-                      Text(
-                        'Set up your relationship',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 800),
-                        child: Card(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                              vertical: 16.0,
-                            ),
-                            child: Column(
-                              spacing: 8,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Relationship name',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                              Text(
+                                'Set up your relationship',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                                TextField(
-                                  controller: relationshipNameController,
-                                  decoration: InputDecoration(
-                                    hintText: 'Eg. Alex and Mary',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                              ),
+
+                              const SizedBox(height: 24),
+
+                              Column(
+                                spacing: 8,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Relationship name *',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                ),
+                                  TextField(
+                                    controller: relationshipNameController,
+                                    decoration: InputDecoration(
+                                      hintText: 'Eg. Alex and Mary',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  ),
 
-                                const SizedBox(height: 12),
+                                  const SizedBox(height: 12),
 
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Wrap(
-                                      crossAxisAlignment:
-                                          WrapCrossAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Anniversary date: ',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
+                                  Text(
+                                    'Anniversary Date *',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+
+                                  UsverseListTile(
+                                    leading: const HugeIcon(
+                                      icon:
+                                          HugeIcons.strokeRoundedCalendarAdd01,
+                                    ),
+                                    extended: true,
+                                    title: anniversaryDate == null
+                                        ? "Select date"
+                                        : DateFormat.yMMMMd().format(
+                                            anniversaryDate!,
                                           ),
-                                        ),
-                                        Text(
-                                          formattedDate,
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                      ],
-                                    ),
-                                    IconButton(
-                                      onPressed: () async {
-                                        anniversaryDate = await pickDate(
-                                          context,
-                                          anniversaryDate,
-                                        );
-
-                                        final String date =
-                                            await DateFunctions()
-                                                .formatDateToString(
-                                                  anniversaryDate,
-                                                );
-                                        setState(() {
-                                          formattedDate = date;
-                                        });
-                                        debugPrint(
-                                          'User selected date: $anniversaryDate',
-                                        );
-                                      },
-                                      icon: Icon(Icons.date_range_rounded),
-                                    ),
-                                  ],
-                                ),
-
-                                const SizedBox(height: 12),
-
-                                Text(
-                                  'Your nickname (Optional)',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                TextField(
-                                  controller: partnerANicknameController,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                ),
-
-                                const SizedBox(height: 12),
-
-                                Text(
-                                  "Partner's nickname (Optional)",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                TextField(
-                                  controller: partnerBNicknameController,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                ),
-
-                                const SizedBox(height: 12),
-
-                                UsverseButton(
-                                  onSubmit: () async {
-                                    final user = auth.currentUser!;
-                                    if (relationshipNameController
-                                            .text
-                                            .isNotEmpty &&
-                                        formattedDate != 'dd-MM-yyyy') {
-                                      final doc = await db
-                                          .collection('users')
-                                          .doc(user.uid)
-                                          .get();
-                                      final relationshipId = doc
-                                          .data()?['relationshipId'];
-                                      await RelationshipService()
-                                          .saveRelationshipDetails(
-                                            relationshipId,
-                                            relationshipNameController.text
-                                                .trim(),
-                                            anniversaryDate,
-                                            partnerANicknameController.text
-                                                .trim(),
-                                            partnerBNicknameController.text
-                                                .trim(),
-                                          );
-                                    } else {
-                                      debugPrint(
-                                        "User did not fill details, show warning dialog.",
+                                    selected: false,
+                                    onTap: () async {
+                                      anniversaryDate = await pickDate(
+                                        context,
+                                        anniversaryDate ?? DateTime.now(),
                                       );
-                                    }
-                                  },
-                                  message: 'Finish setup',
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.primaryContainer,
-                                ),
-                              ],
-                            ),
+
+                                      setState(() {});
+                                    },
+                                  ),
+
+                                  const SizedBox(height: 12),
+
+                                  Text(
+                                    'Your nickname (Optional)',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  TextField(
+                                    controller: partnerANicknameController,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 12),
+
+                                  Text(
+                                    "Partner's nickname (Optional)",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  TextField(
+                                    controller: partnerBNicknameController,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 12),
+
+                                  UsverseButton(
+                                    onSubmit: () async {
+                                      final user = auth.currentUser!;
+                                      if (relationshipNameController
+                                              .text
+                                              .isNotEmpty &&
+                                          anniversaryDate != null) {
+                                        final doc = await db
+                                            .collection('users')
+                                            .doc(user.uid)
+                                            .get();
+                                        final relationshipId = doc
+                                            .data()?['relationshipId'];
+                                        await RelationshipService()
+                                            .saveRelationshipDetails(
+                                              relationshipId,
+                                              relationshipNameController.text
+                                                  .trim(),
+                                              anniversaryDate!,
+                                              partnerANicknameController.text
+                                                  .trim(),
+                                              partnerBNicknameController.text
+                                                  .trim(),
+                                            );
+                                      } else {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Please fill the details to finish setup',
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    message: 'Finish setup',
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primaryContainer,
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              );
-            } else {
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/illustrations/relationship_setup.png',
-                        scale: 4,
-                      ),
-
-                      Icon(
-                        Icons.hourglass_bottom_rounded,
-                        color: Colors.redAccent,
-                        size: 48,
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      Text(
-                        'Set up your relationship',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                );
+              } else {
+                return Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 16.0,
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/illustrations/relationship_setup.png',
+                          scale: 4,
                         ),
-                      ),
-                      Text(
-                        'Please wait while your partner sets up your relationship',
-                      ),
-                    ],
+
+                        Icon(
+                          Icons.hourglass_bottom_rounded,
+                          color: Colors.redAccent,
+                          size: 48,
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        Text(
+                          'Set up your relationship',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Please wait while your partner sets up your relationship',
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            }
-          },
-        ),
+                );
+              }
+            },
+          ),
+        ],
       ),
     );
   }
