@@ -142,6 +142,11 @@ class _UsverseSidebarState extends State<UsverseSidebar> {
                     child: CachedNetworkImage(
                       imageUrl: user!.photoUrl!,
                       scale: 3,
+                      placeholder: (_, _) => const Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      errorWidget: (_, _, _) =>
+                          const HugeIcon(icon: HugeIcons.strokeRoundedUser),
                     ),
                   ),
                   title: user.displayName,
