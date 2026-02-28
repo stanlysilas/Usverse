@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:usverse/core/crypto/relationship_key_provider.dart';
+import 'package:usverse/core/theme/mesh_gradient_background.dart';
 import 'package:usverse/services/firebase/relationship_service.dart';
 import 'package:usverse/shared/widgets/buttons/usverse_icon_button.dart';
 import 'package:usverse/shared/widgets/dialogs/usverse_confirm_dialog.dart';
@@ -28,6 +29,8 @@ class WaitingForPartnerScreen extends StatelessWidget {
       body: Stack(
         alignment: Alignment.topLeft,
         children: [
+          const MeshGradientBackground(),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

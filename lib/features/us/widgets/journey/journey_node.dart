@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:usverse/features/memories/widgets/encrypted_memory_image.dart';
 import 'package:usverse/models/memory_model.dart';
+import 'package:usverse/shared/widgets/dialogs/usverse_feature_dialog.dart';
 
 class JourneyNode extends StatefulWidget {
   final MemoryModel memory;
@@ -37,10 +40,26 @@ class _JourneyNodeState extends State<JourneyNode> {
         hovered = false;
         pressed = false;
       }),
+      cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTapDown: (_) => setState(() => pressed = true),
         onTapUp: (_) => setState(() => pressed = false),
         onTapCancel: () => setState(() => pressed = false),
+        onTap: () => showDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (_) => UsverseFeatureDialog(
+            image: EncryptedMemoryImage(
+              imageUrl: widget.memory.mediaUrl,
+              nonce: widget.memory.nonce,
+              mac: widget.memory.mac,
+            ),
+            title: title,
+            description:
+                "Milestone from: ${DateFormat('EEE d, yy').format(widget.memory.memoryDate)} at ${DateFormat('h:mm a').format(widget.memory.memoryDate)}",
+            cancelText: 'Close',
+          ),
+        ),
         child: SizedBox(
           width: 140,
           height: 180,
@@ -67,7 +86,7 @@ class _JourneyNodeState extends State<JourneyNode> {
                     color: hovered
                         ? colors.primaryContainer
                         : colors.surfaceContainerHighest,
-                    shape: BoxShape.circle,
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(widget.memory.icon ?? '❤️'),
                 ),

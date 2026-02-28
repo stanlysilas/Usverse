@@ -65,9 +65,11 @@ class _EncryptedMemoryImageState extends State<EncryptedMemoryImage> {
       onVisibilityChanged: (info) {
         final size = info.size;
 
+        debugPrint(size.toString());
+
         if (size.height <= 0 || size.width <= 0) return;
 
-        if (info.visibleFraction > 0.2) {
+        if (info.visibleFraction > 0.1) {
           _loadImage();
         }
       },

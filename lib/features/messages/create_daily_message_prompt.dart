@@ -39,7 +39,7 @@ class CreateDailyMessagePrompt extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      "Daily Messages",
+                      "Daily Letters",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -115,7 +115,7 @@ class CreateDailyMessagePrompt extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                "Add message",
+                "Send letter",
                 style: TextStyle(fontSize: 12, color: colors.onSurfaceVariant),
               ),
             ],

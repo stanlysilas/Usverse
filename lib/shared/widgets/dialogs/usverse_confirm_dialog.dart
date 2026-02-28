@@ -61,7 +61,7 @@ class UsverseConfirmDialog extends StatelessWidget {
             const SizedBox(height: 12),
 
             UsverseButton(
-              onSubmit: onCancel ?? () {},
+              onSubmit: onCancel ?? () => Navigator.pop(context),
               message: cancelText,
               color: colors.surfaceContainer,
               useBorder: true,

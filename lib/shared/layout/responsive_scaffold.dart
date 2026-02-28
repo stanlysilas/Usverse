@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:usverse/core/theme/mesh_gradient_background.dart';
 import 'package:usverse/features/home/home_screen.dart';
 import 'package:usverse/features/memories/widgets/create_memory_sheet.dart';
 import 'package:usverse/features/messages/create_daily_message_sheet.dart';
@@ -37,8 +38,8 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
         page: HomeScreen(),
       ),
       UsverseNavigationItem(
-        icon: HugeIcons.strokeRoundedMessage01,
-        label: 'Daily Messages',
+        icon: HugeIcons.strokeRoundedMail01,
+        label: 'Letters',
         page: MessagesScreen(relationshipId: widget.relationshipId),
       ),
       UsverseNavigationItem(
@@ -49,79 +50,89 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
     ];
 
     return Scaffold(
-      body: Row(
+      body: Stack(
         children: [
-          if (useRail)
-            UsverseSidebar(
-              selectedIndex: selectedIndex,
-              onItemSelected: (index) {
-                setState(() => selectedIndex = index);
-              },
-              items: items,
-            ),
+          const MeshGradientBackground(),
 
-          Expanded(child: items[selectedIndex].page),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          showDragHandle: true,
-          useSafeArea: true,
-          builder: (_) => CreateActionSheet(
-            items: [
-              CreateActionItem(
-                leading: HugeIcon(icon: HugeIcons.strokeRoundedMessage01),
-                title: 'Daily Message',
-                subtitle: 'Schedule a message for 24 hours',
-                onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    showDragHandle: true,
-                    useSafeArea: true,
-                    builder: (_) => const CreateDailyMessageSheet(),
-                  );
-                },
-              ),
-              CreateActionItem(
-                leading: HugeIcon(icon: HugeIcons.strokeRoundedClock01),
-                title: 'Memory',
-                subtitle: 'Save a moment together',
-                onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    showDragHandle: true,
-                    useSafeArea: true,
-                    builder: (_) => CreateMemorySheet(
-                      relationshipId: widget.relationshipId,
-                    ),
-                  );
-                },
-              ),
-              CreateActionItem(
-                leading: HugeIcon(icon: HugeIcons.strokeRoundedTarget01),
-                title: 'Shared Goal',
-                subtitle: 'Create a shared goal together',
-                onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    showDragHandle: true,
-                    useSafeArea: true,
-                    builder: (_) => CreateSharedGoalSheet(
-                      relationshipId: widget.relationshipId,
-                    ),
-                  );
-                },
-              ),
+          Row(
+            children: [
+              if (useRail)
+                UsverseSidebar(
+                  selectedIndex: selectedIndex,
+                  onItemSelected: (index) {
+                    setState(() => selectedIndex = index);
+                  },
+                  items: items,
+                ),
+
+              Expanded(child: items[selectedIndex].page),
             ],
           ),
-        ),
-        child: HugeIcon(icon: HugeIcons.strokeRoundedAdd01),
+        ],
       ),
+      floatingActionButton: selectedIndex != 1
+          ? FloatingActionButton(
+              onPressed: () => showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                showDragHandle: true,
+                useSafeArea: true,
+                builder: (_) => CreateActionSheet(
+                  items: [
+                    CreateActionItem(
+                      leading: HugeIcon(icon: HugeIcons.strokeRoundedMail01),
+                      title: 'Write Letter',
+                      subtitle: 'Schedule a letter for 24 hours',
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          showDragHandle: true,
+                          useSafeArea: true,
+                          builder: (_) => const CreateDailyMessageSheet(),
+                        );
+                      },
+                    ),
+                    CreateActionItem(
+                      leading: HugeIcon(icon: HugeIcons.strokeRoundedClock01),
+                      title: 'Memory',
+                      subtitle: 'Save a moment together',
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          showDragHandle: true,
+                          useSafeArea: true,
+                          builder: (_) => CreateMemorySheet(
+                            relationshipId: widget.relationshipId,
+                          ),
+                        );
+                      },
+                    ),
+                    CreateActionItem(
+                      leading: HugeIcon(icon: HugeIcons.strokeRoundedTarget01),
+                      title: 'Shared Goal',
+                      subtitle: 'Create a shared goal together',
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          showDragHandle: true,
+                          useSafeArea: true,
+                          builder: (_) => CreateSharedGoalSheet(
+                            relationshipId: widget.relationshipId,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              child: HugeIcon(icon: HugeIcons.strokeRoundedAdd01),
+            )
+          : null,
+      extendBody: true,
+      extendBodyBehindAppBar: true,
       bottomNavigationBar: useRail
           ? null
           : UsverseNavigationBar(

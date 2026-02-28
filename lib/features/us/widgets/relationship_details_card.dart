@@ -36,6 +36,9 @@ class RelationshipDetailsCard extends StatelessWidget {
         : names.first;
 
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.circular(24),
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Column(
@@ -48,7 +51,7 @@ class RelationshipDetailsCard extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary,
-                    borderRadius: BorderRadius.circular(100),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                   child: HugeIcon(
                     icon: HugeIcons.strokeRoundedFavourite,
@@ -66,19 +69,20 @@ class RelationshipDetailsCard extends StatelessWidget {
             ),
             const Divider(),
             const SizedBox(height: 12),
-            statRow("Days Together", "$daysTogether days"),
+            statRow("Days Together", "$daysTogether days", context),
             const SizedBox(height: 8),
-            statRow("Partners", partnersText),
+            statRow("Partners", partnersText, context),
 
             const SizedBox(height: 8),
             statRow(
               "Anniversary",
               "${anniversary.day}/${anniversary.month}/${anniversary.year}",
+              context,
             ),
 
             if (nextAnniversaryText.isNotEmpty) ...[
               const SizedBox(height: 8),
-              statRow("Next Milestone", nextAnniversaryText),
+              statRow("Next Milestone", nextAnniversaryText, context),
             ],
           ],
         ),
@@ -86,11 +90,17 @@ class RelationshipDetailsCard extends StatelessWidget {
     );
   }
 
-  Widget statRow(String label, String value) {
+  Widget statRow(String label, String value, BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(fontSize: 16, color: Colors.grey)),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
         Flexible(
           child: Text(
             value,

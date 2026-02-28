@@ -46,6 +46,16 @@ class _UsverseNavButtonState extends State<UsverseNavButton> {
                   curve: Curves.easeOut,
                   child: HugeIcon(icon: widget.item.icon, color: color),
                 ),
+                const SizedBox(height: 6),
+                SizedBox(
+                  width: 80,
+                  child: Text(
+                    widget.item.label,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    style: TextStyle(fontSize: 12, color: color),
+                  ),
+                ),
               ],
             ),
           ),

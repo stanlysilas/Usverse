@@ -13,6 +13,9 @@ class DaysTogetherCard extends StatelessWidget {
     );
 
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.circular(24),
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
         child: Column(
@@ -25,7 +28,7 @@ class DaysTogetherCard extends StatelessWidget {
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary,
-                    borderRadius: BorderRadius.circular(100),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                   child: Icon(
                     Icons.timeline_rounded,

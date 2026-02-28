@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:usverse/core/crypto/relationship_key_provider.dart';
+import 'package:usverse/core/theme/mesh_gradient_background.dart';
 import 'package:usverse/services/firebase/relationship_service.dart';
 import 'package:usverse/shared/pickers/date_time_pickers.dart';
 import 'package:usverse/shared/widgets/buttons/usverse_button.dart';
@@ -43,6 +44,8 @@ class _RelationshipSetupScreenState extends State<RelationshipSetupScreen> {
       body: Stack(
         alignment: Alignment.topLeft,
         children: [
+          const MeshGradientBackground(),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -257,40 +260,51 @@ class _RelationshipSetupScreenState extends State<RelationshipSetupScreen> {
                   ),
                 );
               } else {
-                return Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 16.0,
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/illustrations/relationship_setup.png',
-                          scale: 4,
+                return Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: 420, maxHeight: 420),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadiusGeometry.circular(24),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 32.0,
+                          vertical: 24.0,
                         ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            HugeIcon(
+                              icon: HugeIcons.strokeRoundedHourglass,
+                              color: Colors.redAccent,
+                              size: 42,
+                            ),
 
-                        Icon(
-                          Icons.hourglass_bottom_rounded,
-                          color: Colors.redAccent,
-                          size: 48,
-                        ),
+                            const SizedBox(height: 12),
 
-                        const SizedBox(height: 12),
+                            Text(
+                              'Set up your relationship',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
 
-                        Text(
-                          'Set up your relationship',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
+                            const SizedBox(height: 24),
+
+                            SizedBox(
+                              width: 250,
+                              child: Text(
+                                'Please wait while your partner sets up your relationship',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          'Please wait while your partner sets up your relationship',
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 );

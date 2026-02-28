@@ -1,10 +1,10 @@
-class CountdownParts {
+class CountdownModel {
   final int days;
   final int hours;
   final int minutes;
   final int seconds;
 
-  CountdownParts({
+  CountdownModel({
     required this.days,
     required this.hours,
     required this.minutes,
@@ -12,8 +12,8 @@ class CountdownParts {
   });
 }
 
-CountdownParts splitDuration(Duration duration) {
-  return CountdownParts(
+CountdownModel splitDuration(Duration duration) {
+  return CountdownModel(
     days: duration.inDays,
     hours: duration.inHours.remainder(24),
     minutes: duration.inMinutes.remainder(60),

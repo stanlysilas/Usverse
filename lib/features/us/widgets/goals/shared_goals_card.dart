@@ -16,6 +16,9 @@ class SharedGoalsCard extends StatelessWidget {
     final service = GoalsService();
 
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.circular(24),
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Column(
@@ -27,7 +30,7 @@ class SharedGoalsCard extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: colors.primary,
-                    borderRadius: BorderRadius.circular(100),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                   child: HugeIcon(
                     icon: HugeIcons.strokeRoundedTarget02,

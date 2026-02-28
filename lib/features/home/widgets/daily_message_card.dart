@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:usverse/models/daily_message_model.dart';
 import 'package:usverse/services/firebase/daily_message_service.dart';
 import 'package:usverse/shared/widgets/buttons/usverse_icon_button.dart';
+import 'package:usverse/shared/widgets/dialogs/usverse_confirm_dialog.dart';
 
 class DailyMessageCard extends StatelessWidget {
   final DailyMessage message;
@@ -15,6 +16,9 @@ class DailyMessageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.circular(24),
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
         child: Column(
@@ -27,7 +31,7 @@ class DailyMessageCard extends StatelessWidget {
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary,
-                    borderRadius: BorderRadius.circular(100),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                   child: HugeIcon(
                     icon: HugeIcons.strokeRoundedMail01,
@@ -44,17 +48,34 @@ class DailyMessageCard extends StatelessWidget {
                 if (message.senderId == auth.uid)
                   UsverseIconButton(
                     onTap: () {
-                      DailyMessageService().deleteMessage(
-                        message.id,
-                        message.relationshipId,
-                      );
+                      showDialog(
+                        context: context,
+                        builder: (_) => UsverseConfirmDialog(
+                          title:
+                              'Are you sure you want to delete this message?',
+                          message:
+                              "You won't be able to recover this message once after deleting it.",
+                          onConfirm: () async {
+                            await DailyMessageService().deleteMessage(
+                              message.id,
+                              message.relationshipId,
+                            );
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Message deleted succesfully')),
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Message deleted succesfully'),
+                                ),
+                              );
+
+                              Navigator.pop(context);
+                            }
+                          },
+                        ),
                       );
                     },
                     icon: HugeIcons.strokeRoundedDelete01,
-                    message: 'Delete',
+                    message: 'Delete message',
                     foregroundColor: Theme.of(context).colorScheme.error,
                   ),
               ],

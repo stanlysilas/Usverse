@@ -23,7 +23,7 @@ class UsverseNavigationBar extends StatelessWidget {
       child: Container(
         height: 72,
         decoration: BoxDecoration(
-          color: colors.surfaceContainer,
+          color: colors.surfaceContainer.withAlpha(100),
           border: Border(
             top: BorderSide(color: colors.outlineVariant, width: 0.5),
           ),

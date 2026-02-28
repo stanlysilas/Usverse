@@ -14,6 +14,9 @@ class MemoryTimelineCard extends StatelessWidget {
     final memoriesService = MemoriesService();
 
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.circular(24),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -26,7 +29,7 @@ class MemoryTimelineCard extends StatelessWidget {
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary,
-                    borderRadius: BorderRadius.circular(100),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                   child: HugeIcon(
                     icon: HugeIcons.strokeRoundedClock01,

@@ -7,7 +7,7 @@ class AppConfig {
   static final Environment env = _resolveEnvironment();
 
   static Environment _resolveEnvironment() {
-    const value = String.fromEnvironment('ENV', defaultValue: 'prod');
+    const value = String.fromEnvironment('ENV', defaultValue: 'dev');
 
     switch (value) {
       case 'prod':

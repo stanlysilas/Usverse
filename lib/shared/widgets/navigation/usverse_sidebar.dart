@@ -7,6 +7,7 @@ import 'package:usverse/models/user_model.dart';
 import 'package:usverse/models/usverse_navigation_items.dart';
 import 'package:usverse/services/firebase/user_profile_service.dart';
 import 'package:usverse/shared/widgets/buttons/usverse_icon_button.dart';
+import 'package:usverse/shared/widgets/dialogs/usverse_feature_dialog.dart';
 import 'package:usverse/shared/widgets/usverse_list_tile.dart';
 
 class UsverseSidebar extends StatefulWidget {
@@ -39,7 +40,7 @@ class _UsverseSidebarState extends State<UsverseSidebar> {
       curve: Curves.easeInOutCubic,
       width: extended ? 260 : 72,
       decoration: BoxDecoration(
-        color: colors.surfaceContainer,
+        color: colors.surfaceContainer.withAlpha(100),
         border: Border(
           right: BorderSide(color: colors.outlineVariant, width: 0.5),
         ),
@@ -126,6 +127,7 @@ class _UsverseSidebarState extends State<UsverseSidebar> {
                 ),
               ),
             ),
+
             StreamBuilder<UserModel?>(
               stream: profileService.watchUser(auth.uid),
               builder: (context, snapshot) {
@@ -151,11 +153,23 @@ class _UsverseSidebarState extends State<UsverseSidebar> {
                   ),
                   title: user.displayName,
                   subtitle: user.email,
-                  onTap: () {
-                    debugPrint(
-                      "User Tapped on their Avatar, Navigate to their Profile Screen",
-                    );
-                  },
+                  onTap: () => showDialog(
+                    context: context,
+                    builder: (_) => UsverseFeatureDialog(
+                      image: CachedNetworkImage(
+                        imageUrl: user.photoUrl!,
+                        fit: BoxFit.cover,
+                        placeholder: (_, _) => const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        errorWidget: (_, _, _) =>
+                            const HugeIcon(icon: HugeIcons.strokeRoundedUser),
+                      ),
+                      title: user.displayName,
+                      description: user.email,
+                      cancelText: 'Close',
+                    ),
+                  ),
                   selected: false,
                   extended: extended,
                 );

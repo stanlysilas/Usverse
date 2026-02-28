@@ -29,6 +29,7 @@ class _UsScreenState extends State<UsScreen> {
       builder: (context, idSnapshot) {
         if (!idSnapshot.hasData) {
           return const Scaffold(
+            backgroundColor: Colors.transparent,
             body: Center(child: CircularProgressIndicator()),
           );
         }
@@ -40,6 +41,7 @@ class _UsScreenState extends State<UsScreen> {
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Scaffold(
+                backgroundColor: Colors.transparent,
                 body: Center(child: CircularProgressIndicator()),
               );
             }
@@ -47,60 +49,65 @@ class _UsScreenState extends State<UsScreen> {
             final relationship = snapshot.data!;
 
             return Scaffold(
+              backgroundColor: Colors.transparent,
               appBar: AppBar(
                 title: Text(
                   relationship.relationshipName,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
+                backgroundColor: Colors.transparent,
               ),
-              body: LayoutBuilder(
-                builder: (context, constraints) {
-                  final isWide = constraints.maxWidth > 800;
+              extendBodyBehindAppBar: true,
+              body: SafeArea(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isWide = constraints.maxWidth > 800;
 
-                  final content = Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 16.0,
-                    ),
-                    child: isWide
-                        ? Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: _LeftColumn(
+                    final content = Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 16.0,
+                      ),
+                      child: isWide
+                          ? Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: _LeftColumn(
+                                    relationship: relationship,
+                                    relationshipId: relationshipId,
+                                  ),
+                                ),
+
+                                const SizedBox(width: 24),
+
+                                Expanded(
+                                  child: _RightColumn(
+                                    relationshipId: relationshipId,
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Column(
+                              children: [
+                                _LeftColumn(
                                   relationship: relationship,
                                   relationshipId: relationshipId,
                                 ),
-                              ),
+                                const SizedBox(height: 20),
+                                _RightColumn(relationshipId: relationshipId),
+                              ],
+                            ),
+                    );
 
-                              const SizedBox(width: 24),
-
-                              Expanded(
-                                child: _RightColumn(
-                                  relationshipId: relationshipId,
-                                ),
-                              ),
-                            ],
-                          )
-                        : Column(
-                            children: [
-                              _LeftColumn(
-                                relationship: relationship,
-                                relationshipId: relationshipId,
-                              ),
-                              const SizedBox(height: 20),
-                              _RightColumn(relationshipId: relationshipId),
-                            ],
-                          ),
-                  );
-
-                  return Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: 1920),
-                      child: SingleChildScrollView(child: content),
-                    ),
-                  );
-                },
+                    return Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 1920),
+                        child: SingleChildScrollView(child: content),
+                      ),
+                    );
+                  },
+                ),
               ),
             );
           },
@@ -200,9 +207,13 @@ class _RightColumn extends StatelessWidget {
               title: 'Are you sure you want to log out?',
               message: 'Log out of Usverse as ${auth.currentUser!.email}?',
               confirmText: 'Log out',
-              onConfirm: () {
+              onConfirm: () async {
                 RelationshipKeyProvider.instance.clear();
-                auth.signOut();
+                await auth.signOut();
+
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
               },
               onCancel: () => Navigator.pop(context),
             ),

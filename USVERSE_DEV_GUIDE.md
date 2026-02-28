@@ -428,4 +428,18 @@ Every feature must reinforce intentional connection.
 
 ---
 
+# 22. Building and deploying steps
+
+1. git add .
+2. git commit -m "message"
+3. git push origin dev/main
+
+Merging with the other branch
+
+4. git checkout dev/main
+5. git merge dev/main
+6. git push origin dev/main
+
+---
+
 END OF DOCUMENT

@@ -6,6 +6,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:usverse/core/utils/date_functions.dart';
 import 'package:usverse/models/countdown_model.dart';
 import 'package:usverse/models/relationship_model.dart';
+import 'package:usverse/shared/widgets/countdown_box.dart';
 
 class AnniversaryCountdownCard extends StatefulWidget {
   final Relationship relationship;
@@ -86,6 +87,9 @@ class _AnniversaryCountdownCardState extends State<AnniversaryCountdownCard> {
       alignment: Alignment.topCenter,
       children: [
         Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadiusGeometry.circular(24),
+          ),
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 16.0,
@@ -101,7 +105,7 @@ class _AnniversaryCountdownCardState extends State<AnniversaryCountdownCard> {
                       padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(100),
+                        borderRadius: BorderRadius.circular(14),
                       ),
                       child: HugeIcon(
                         icon: HugeIcons.strokeRoundedCalendar01,
@@ -122,12 +126,26 @@ class _AnniversaryCountdownCardState extends State<AnniversaryCountdownCard> {
                 const SizedBox(height: 12),
 
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    timeBlock(parts.days, "Days"),
-                    timeBlock(parts.hours, "Hours"),
-                    timeBlock(parts.minutes, "Minutes"),
-                    timeBlock(parts.seconds, "Seconds"),
+                    Expanded(
+                      child: CountdownBox(value: parts.days, label: "Days"),
+                    ),
+                    Expanded(
+                      child: CountdownBox(value: parts.hours, label: "Hours"),
+                    ),
+                    Expanded(
+                      child: CountdownBox(
+                        value: parts.minutes,
+                        label: "Minutes",
+                      ),
+                    ),
+                    Expanded(
+                      child: CountdownBox(
+                        value: parts.seconds,
+                        label: "Seconds",
+                      ),
+                    ),
                   ],
                 ),
 
@@ -155,42 +173,6 @@ class _AnniversaryCountdownCardState extends State<AnniversaryCountdownCard> {
           gravity: 0.2,
         ),
       ],
-    );
-  }
-
-  Widget timeBlock(int value, String label) {
-    return Expanded(
-      child: Container(
-        margin: EdgeInsets.all(8.0),
-        padding: const EdgeInsets.all(8.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: Theme.of(context).colorScheme.secondaryContainer,
-        ),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      value.toString().padLeft(2, '0'),
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            FittedBox(fit: BoxFit.scaleDown, child: Text(label, maxLines: 1)),
-          ],
-        ),
-      ),
     );
   }
 }
