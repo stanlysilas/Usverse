@@ -3,22 +3,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
-import 'package:usverse/services/firebase/daily_message_service.dart';
+import 'package:usverse/services/firebase/daily_letters_service.dart';
 import 'package:usverse/services/firebase/relationship_service.dart';
 import 'package:usverse/shared/pickers/date_time_pickers.dart';
 import 'package:usverse/shared/widgets/buttons/usverse_button.dart';
 import 'package:usverse/shared/widgets/usverse_list_tile.dart';
 
-class CreateDailyMessageSheet extends StatefulWidget {
-  const CreateDailyMessageSheet({super.key});
+class CreateDailyLetterSheet extends StatefulWidget {
+  const CreateDailyLetterSheet({super.key});
 
   @override
-  State<CreateDailyMessageSheet> createState() =>
-      _CreateDailyMessageSheetState();
+  State<CreateDailyLetterSheet> createState() => _CreateDailyLetterSheetState();
 }
 
-class _CreateDailyMessageSheetState extends State<CreateDailyMessageSheet> {
-  final DailyMessageService messageService = DailyMessageService();
+class _CreateDailyLetterSheetState extends State<CreateDailyLetterSheet> {
+  final DailyLettersService lettersService = DailyLettersService();
   final RelationshipService relationshipService = RelationshipService();
   final TextEditingController messageController = TextEditingController();
 
@@ -74,7 +73,7 @@ class _CreateDailyMessageSheetState extends State<CreateDailyMessageSheet> {
 
       final userData = userDoc.data()!;
 
-      await messageService.createMessage(
+      await lettersService.createLetter(
         relationshipId: relationshipId,
         text: messageController.text.trim(),
         startAt: scheduledDateTime!,

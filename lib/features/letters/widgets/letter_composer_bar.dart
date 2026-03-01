@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:usverse/core/utils/date_functions.dart';
-import 'package:usverse/services/firebase/daily_message_service.dart';
+import 'package:usverse/services/firebase/daily_letters_service.dart';
 import 'package:usverse/shared/pickers/date_time_pickers.dart';
 import 'package:usverse/shared/widgets/buttons/usverse_icon_button.dart';
 
@@ -58,7 +58,7 @@ class _MessageComposerBarState extends State<MessageComposerBar> {
 
     final userData = userDoc.data()!;
 
-    await DailyMessageService().createMessage(
+    await DailyLettersService().createLetter(
       relationshipId: widget.relationshipId,
       text: text,
       startAt: scheduledDateTime,

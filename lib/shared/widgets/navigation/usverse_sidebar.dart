@@ -39,6 +39,7 @@ class _UsverseSidebarState extends State<UsverseSidebar> {
       duration: const Duration(milliseconds: 220),
       curve: Curves.easeInOutCubic,
       width: extended ? 260 : 72,
+      clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         color: colors.surfaceContainer.withAlpha(100),
         border: Border(
@@ -60,6 +61,26 @@ class _UsverseSidebarState extends State<UsverseSidebar> {
                     ? MainAxisAlignment.spaceBetween
                     : MainAxisAlignment.center,
                 children: [
+                  if (extended)
+                    Flexible(
+                      child: ClipRect(
+                        child: AnimatedAlign(
+                          duration: const Duration(milliseconds: 220),
+                          curve: Curves.easeInOutCubic,
+                          alignment: Alignment.center,
+                          widthFactor: extended ? 1 : 0,
+                          child: SvgPicture.asset(
+                            'assets/logos/usverse_logo.svg',
+                            width: 120,
+                            colorFilter: ColorFilter.mode(
+                              Theme.of(context).colorScheme.onSurface,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
                   Flexible(
                     child: UsverseIconButton(
                       onTap: () {
@@ -72,28 +93,6 @@ class _UsverseSidebarState extends State<UsverseSidebar> {
                           : SystemMouseCursors.resizeRight,
                     ),
                   ),
-
-                  if (extended)
-                    Flexible(
-                      child: ClipRect(
-                        child: AnimatedAlign(
-                          duration: const Duration(milliseconds: 100),
-                          curve: Curves.easeInOutCubic,
-                          alignment: Alignment.centerLeft,
-                          widthFactor: extended ? 1 : 0,
-                          child: SvgPicture.asset(
-                            'assets/logos/usverse_logo.svg',
-                            width: 100,
-                            colorFilter: ColorFilter.mode(
-                              Theme.of(context).colorScheme.onSurface,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                  if (extended) const Spacer(),
                 ],
               ),
             ),

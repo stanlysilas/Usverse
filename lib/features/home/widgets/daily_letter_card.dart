@@ -2,14 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
-import 'package:usverse/models/daily_message_model.dart';
-import 'package:usverse/services/firebase/daily_message_service.dart';
+import 'package:usverse/models/daily_letter_model.dart';
+import 'package:usverse/services/firebase/daily_letters_service.dart';
 import 'package:usverse/shared/widgets/buttons/usverse_icon_button.dart';
 import 'package:usverse/shared/widgets/dialogs/usverse_confirm_dialog.dart';
 
-class DailyMessageCard extends StatelessWidget {
-  final DailyMessage message;
-  DailyMessageCard({super.key, required this.message});
+class DailyLettersCard extends StatelessWidget {
+  final DailyLetter letter;
+  DailyLettersCard({super.key, required this.letter});
 
   final auth = FirebaseAuth.instance.currentUser!;
 
@@ -40,31 +40,30 @@ class DailyMessageCard extends StatelessWidget {
                 ),
                 Expanded(
                   child: Text(
-                    "Today's Message",
+                    "Today's Letter",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
 
-                if (message.senderId == auth.uid)
+                if (letter.senderId == auth.uid)
                   UsverseIconButton(
                     onTap: () {
                       showDialog(
                         context: context,
                         builder: (_) => UsverseConfirmDialog(
-                          title:
-                              'Are you sure you want to delete this message?',
+                          title: 'Are you sure you want to delete this letter?',
                           message:
-                              "You won't be able to recover this message once after deleting it.",
+                              "You won't be able to recover this letter once after deleting it.",
                           onConfirm: () async {
-                            await DailyMessageService().deleteMessage(
-                              message.id,
-                              message.relationshipId,
+                            await DailyLettersService().deleteLetter(
+                              letter.id,
+                              letter.relationshipId,
                             );
 
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('Message deleted succesfully'),
+                                  content: Text('Letter deleted succesfully'),
                                 ),
                               );
 
@@ -83,18 +82,18 @@ class DailyMessageCard extends StatelessWidget {
             const Divider(),
             const SizedBox(height: 12),
 
-            Text(message.message, style: TextStyle(fontSize: 16)),
+            Text(letter.message, style: TextStyle(fontSize: 16)),
 
             const SizedBox(height: 6),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "From: ${message.senderDisplayName}",
+                  "From: ${letter.senderDisplayName}",
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
                 Text(
-                  DateFormat('h:MM a').format(message.startAt),
+                  DateFormat('h:MM a').format(letter.startAt),
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ],

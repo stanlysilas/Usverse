@@ -5,10 +5,10 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:usverse/models/user_model.dart';
 import 'package:usverse/services/firebase/user_profile_service.dart';
 
-class CreateDailyMessagePrompt extends StatelessWidget {
+class CreateDailyLetterPrompt extends StatelessWidget {
   final VoidCallback onTap;
 
-  const CreateDailyMessagePrompt({super.key, required this.onTap});
+  const CreateDailyLetterPrompt({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

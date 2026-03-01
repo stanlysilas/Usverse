@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:usverse/models/daily_message_model.dart';
+import 'package:usverse/models/daily_letter_model.dart';
 
-class DailyMessageService {
-  CollectionReference<Map<String, dynamic>> messagesRef(String relationshipId) {
+class DailyLettersService {
+  CollectionReference<Map<String, dynamic>> lettersRef(String relationshipId) {
     return FirebaseFirestore.instance
         .collection('relationships')
         .doc(relationshipId)
         .collection('dailyMessages');
   }
 
-  Future<void> createMessage({
+  Future<void> createLetter({
     required String relationshipId,
     required String text,
     required DateTime startAt,
@@ -21,7 +21,7 @@ class DailyMessageService {
 
     final expiresAt = startAt.add(const Duration(hours: 24));
 
-    final doc = messagesRef(relationshipId).doc();
+    final doc = lettersRef(relationshipId).doc();
 
     await doc.set({
       'relationshipId': relationshipId,
@@ -37,14 +37,14 @@ class DailyMessageService {
     });
   }
 
-  Stream<DailyMessage?> watchActiveMessage(String relationshipId) {
-    return messagesRef(
+  Stream<DailyLetter?> watchActiveLetters(String relationshipId) {
+    return lettersRef(
       relationshipId,
     ).orderBy('startAt', descending: true).limit(5).snapshots().map((snapshot) {
       final now = DateTime.now();
 
       for (final doc in snapshot.docs) {
-        final message = DailyMessage.fromFirestore(doc);
+        final message = DailyLetter.fromFirestore(doc);
 
         if (message.startAt.isBefore(now) && message.expiresAt.isAfter(now)) {
           return message;
@@ -55,14 +55,14 @@ class DailyMessageService {
     });
   }
 
-  Stream<List<DailyMessage>> watchMessagesForDate(
+  Stream<List<DailyLetter>> watchLettersForDate(
     String relationshipId,
     DateTime date,
   ) {
     final startOfDay = DateTime(date.year, date.month, date.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
-    return messagesRef(relationshipId)
+    return lettersRef(relationshipId)
         .where(
           'startAt',
           isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay),
@@ -72,12 +72,12 @@ class DailyMessageService {
         .snapshots()
         .map(
           (snapshot) => snapshot.docs
-              .map((doc) => DailyMessage.fromFirestore(doc))
+              .map((doc) => DailyLetter.fromFirestore(doc))
               .toList(),
         );
   }
 
-  Future<void> deleteMessage(String messageId, String relationshipId) async {
-    await messagesRef(relationshipId).doc(messageId).delete();
+  Future<void> deleteLetter(String letterId, String relationshipId) async {
+    await lettersRef(relationshipId).doc(letterId).delete();
   }
 }

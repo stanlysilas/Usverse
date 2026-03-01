@@ -1,18 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:usverse/features/messages/widgets/message_composer_bar.dart';
-import 'package:usverse/models/daily_message_model.dart';
-import 'package:usverse/services/firebase/daily_message_service.dart';
+import 'package:usverse/features/letters/widgets/letter_composer_bar.dart';
+import 'package:usverse/models/daily_letter_model.dart';
+import 'package:usverse/services/firebase/daily_letters_service.dart';
 
-class MessagesScreen extends StatelessWidget {
+class LettersScreen extends StatelessWidget {
   final String relationshipId;
 
-  const MessagesScreen({super.key, required this.relationshipId});
+  const LettersScreen({super.key, required this.relationshipId});
 
   @override
   Widget build(BuildContext context) {
-    final service = DailyMessageService();
+    final service = DailyLettersService();
 
     double expiryProgress(DateTime start, DateTime end) {
       final total = end.difference(start).inSeconds;
@@ -32,8 +32,8 @@ class MessagesScreen extends StatelessWidget {
       ),
       extendBodyBehindAppBar: true,
       body: SafeArea(
-        child: StreamBuilder<List<DailyMessage>>(
-          stream: service.watchMessagesForDate(relationshipId, DateTime.now()),
+        child: StreamBuilder<List<DailyLetter>>(
+          stream: service.watchLettersForDate(relationshipId, DateTime.now()),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Center(child: Text('Letters missing'));
@@ -43,9 +43,9 @@ class MessagesScreen extends StatelessWidget {
               return Center(child: Text('Error: ${snapshot.error}'));
             }
 
-            final messages = snapshot.data!;
+            final letters = snapshot.data!;
 
-            if (messages.isEmpty) {
+            if (letters.isEmpty) {
               return const Center(
                 child: Text(
                   "No letters scheduled today 💌",
@@ -59,9 +59,9 @@ class MessagesScreen extends StatelessWidget {
                 constraints: BoxConstraints(maxWidth: 520),
                 child: ListView.builder(
                   padding: const EdgeInsets.all(16),
-                  itemCount: messages.length,
+                  itemCount: letters.length,
                   itemBuilder: (context, index) {
-                    final message = messages[index];
+                    final message = letters[index];
 
                     final isMe =
                         message.senderId ==
@@ -72,6 +72,7 @@ class MessagesScreen extends StatelessWidget {
                     //     DateTime.now().isBefore(message.expiresAt);
 
                     return Card(
+                      key: ValueKey(letters[index].id),
                       color: isMe
                           ? Theme.of(context).colorScheme.secondaryContainer
                           : null,

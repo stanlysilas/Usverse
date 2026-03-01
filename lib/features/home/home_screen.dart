@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:usverse/features/home/widgets/anniversary_countdown_card.dart';
-import 'package:usverse/features/home/widgets/daily_message_section.dart';
+import 'package:usverse/features/home/widgets/daily_letters_section.dart';
 import 'package:usverse/features/home/widgets/days_together_card.dart';
 import 'package:usverse/features/home/widgets/memory_timeline_card.dart';
 import 'package:usverse/features/us/widgets/relationship_details_card.dart';
@@ -170,7 +170,7 @@ class _RightColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        DailyMessageSection(relationshipId: relationshipId),
+        DailyLettersSection(relationshipId: relationshipId),
 
         const SizedBox(height: 20),
 

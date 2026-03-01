@@ -3,8 +3,8 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:usverse/core/theme/mesh_gradient_background.dart';
 import 'package:usverse/features/home/home_screen.dart';
 import 'package:usverse/features/memories/widgets/create_memory_sheet.dart';
-import 'package:usverse/features/messages/create_daily_message_sheet.dart';
-import 'package:usverse/features/messages/messages_screen.dart';
+import 'package:usverse/features/letters/create_daily_letter_sheet.dart';
+import 'package:usverse/features/letters/letters_screen.dart';
 import 'package:usverse/features/us/us_screen.dart';
 import 'package:usverse/features/us/widgets/goals/create_shared_goals_dialog.dart';
 import 'package:usverse/models/create_action_item.dart';
@@ -40,7 +40,7 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
       UsverseNavigationItem(
         icon: HugeIcons.strokeRoundedMail01,
         label: 'Letters',
-        page: MessagesScreen(relationshipId: widget.relationshipId),
+        page: LettersScreen(relationshipId: widget.relationshipId),
       ),
       UsverseNavigationItem(
         icon: HugeIcons.strokeRoundedManWoman,
@@ -89,7 +89,7 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                           isScrollControlled: true,
                           showDragHandle: true,
                           useSafeArea: true,
-                          builder: (_) => const CreateDailyMessageSheet(),
+                          builder: (_) => const CreateDailyLetterSheet(),
                         );
                       },
                     ),

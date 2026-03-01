@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class DailyMessage {
+class DailyLetter {
   final String id;
   final String relationshipId;
   final String senderId;
@@ -11,7 +11,7 @@ class DailyMessage {
   final String senderDisplayName;
   final String senderPhotoUrl;
 
-  DailyMessage({
+  DailyLetter({
     required this.id,
     required this.relationshipId,
     required this.senderId,
@@ -23,10 +23,10 @@ class DailyMessage {
     required this.senderPhotoUrl,
   });
 
-  factory DailyMessage.fromFirestore(DocumentSnapshot doc) {
+  factory DailyLetter.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
 
-    return DailyMessage(
+    return DailyLetter(
       id: doc.id,
       relationshipId: data['relationshipId'],
       senderId: data['senderId'],
