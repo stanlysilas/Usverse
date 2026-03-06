@@ -92,12 +92,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             )
                           : Column(
                               children: [
+                                _RightColumn(relationshipId: relationshipId),
+                                const SizedBox(height: 20),
                                 _LeftColumn(
                                   relationship: relationship,
                                   relationshipId: relationshipId,
                                 ),
-                                const SizedBox(height: 20),
-                                _RightColumn(relationshipId: relationshipId),
                               ],
                             ),
                     );

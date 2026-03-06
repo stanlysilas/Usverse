@@ -62,13 +62,6 @@ class SharedGoalsCard extends StatelessWidget {
                   );
                 }
 
-                if (snapshot.hasError) {
-                  debugPrint(snapshot.error.toString());
-                  return Center(
-                    child: Text("Error: ${snapshot.error.toString()}"),
-                  );
-                }
-
                 final goals = snapshot.data ?? [];
 
                 if (goals.isEmpty) {

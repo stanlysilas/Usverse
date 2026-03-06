@@ -18,13 +18,20 @@ dependencies:
   firebase_core: ^4.4.0
   flutter_image_compress: ^2.4.0
   flutter_launcher_icons: ^0.14.4
+  flutter_map: ^8.2.2
+  flutter_map_animations: ^0.9.0
   flutter_svg: ^2.2.3
+  geolocator: ^14.0.2
   google_sign_in: ^7.2.0
+  hive_ce: ^2.19.3
+  hive_ce_flutter: ^2.3.4
   http: ^1.6.0
   hugeicons: ^1.1.5
   image_picker: ^1.2.1
   intl: ^0.20.2
+  latlong2: ^0.9.1
   mime: ^2.0.0
+  permission_handler: ^12.0.1
   share_plus: ^12.0.1
   shared_preferences: ^2.5.4
   visibility_detector: ^0.4.0+2
@@ -42,3 +49,22 @@ flutter:
     - assets/auth_providers/
     - assets/illustrations/
     - assets/logos/
+
+  fonts:
+    - family: Plus Jakarta Sans
+      fonts:
+        - asset: assets/fonts/PlusJakartaSans/PlusJakartaSans-Regular.ttf
+        - asset: assets/fonts/PlusJakartaSans/PlusJakartaSans-Italic.ttf
+        - asset: assets/fonts/PlusJakartaSans/PlusJakartaSans-Italic-VariableFont_wght.ttf
+        - asset: assets/fonts/PlusJakartaSans/PlusJakartaSans-VariableFont_wght.ttf
+        - asset: assets/fonts/PlusJakartaSans/PlusJakartaSans-Light.ttf
+        - asset: assets/fonts/PlusJakartaSans/PlusJakartaSans-ExtraLight.ttf
+        - asset: assets/fonts/PlusJakartaSans/PlusJakartaSans-LightItalic.ttf
+        - asset: assets/fonts/PlusJakartaSans/PlusJakartaSans-ExtraLightItalic.ttf
+        - asset: assets/fonts/PlusJakartaSans/PlusJakartaSans-Medium.ttf
+        - asset: assets/fonts/PlusJakartaSans/PlusJakartaSans-MediumItalic.ttf
+        - asset: assets/fonts/PlusJakartaSans/PlusJakartaSans-Bold.ttf
+        - asset: assets/fonts/PlusJakartaSans/PlusJakartaSans-BoldItalic.ttf
+        - asset: assets/fonts/PlusJakartaSans/PlusJakartaSans-ExtraBoldItalic.ttf
+        - asset: assets/fonts/PlusJakartaSans/PlusJakartaSans-SemiBold.ttf
+        - asset: assets/fonts/PlusJakartaSans/PlusJakartaSans-SemiBoldItalic.ttf

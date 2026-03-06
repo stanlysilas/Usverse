@@ -37,7 +37,11 @@ class DaysTogetherCard extends StatelessWidget {
                 ),
                 Text(
                   'Days Together',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    // fontFamily: 'Plus Jakarta Sans',
+                  ),
                 ),
               ],
             ),
