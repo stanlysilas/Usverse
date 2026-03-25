@@ -27,14 +27,14 @@ class SettingsScreen extends StatelessWidget {
                       children: [
                         Expanded(child: _LeftColumn()),
                         const SizedBox(width: 24),
-                        Expanded(child: _RightColumn()),
+                        // Expanded(child: _RightColumn()),
                       ],
                     )
                   : Column(
                       children: [
                         _LeftColumn(),
                         const SizedBox(height: 20),
-                        _RightColumn(),
+                        // _RightColumn(),
                       ],
                     ),
             );
@@ -64,14 +64,14 @@ class _LeftColumn extends StatelessWidget {
   }
 }
 
-class _RightColumn extends StatelessWidget {
-  const _RightColumn();
+// class _RightColumn extends StatelessWidget {
+//   const _RightColumn();
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [UserPreferencesCard()],
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.stretch,
+//       children: [UserPreferencesCard()],
+//     );
+//   }
+// }

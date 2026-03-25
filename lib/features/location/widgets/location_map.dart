@@ -225,66 +225,69 @@ class _LocationMapState extends State<LocationMap>
 
         Positioned(
           bottom: 90,
-          left: 160,
-          right: 160,
+          left: 12,
+          right: 12,
 
           child: StreamBuilder<UserModel?>(
             stream: profileService.watchUser(partner.userId),
             builder: (context, snapshot) {
               final user = snapshot.data;
 
-              return GestureDetector(
-                onTap: () {
-                  focusPartner(partner);
-                },
-                child: Card(
-                  elevation: 6,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 10,
-                    ),
-                    child: Row(
-                      children: [
-                        ClipOval(
-                          child: partnerAvatar != null
-                              ? CachedNetworkImage(
-                                  imageUrl: partnerAvatar,
-                                  fit: BoxFit.cover,
-                                  scale: 3,
-                                  placeholder: (_, _) => const Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
+              return MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: () {
+                    focusPartner(partner);
+                  },
+                  child: Card(
+                    elevation: 6,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      child: Row(
+                        children: [
+                          ClipOval(
+                            child: partnerAvatar != null
+                                ? CachedNetworkImage(
+                                    imageUrl: partnerAvatar,
+                                    fit: BoxFit.cover,
+                                    scale: 3,
+                                    placeholder: (_, _) => const Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
                                     ),
-                                  ),
-                                  errorWidget: (_, _, _) => const HugeIcon(
-                                    icon: HugeIcons.strokeRoundedManWoman,
-                                  ),
-                                )
-                              : null,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                user?.displayName ?? 'User',
-                                style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(fontWeight: FontWeight.w600),
-                              ),
-                              Text(
-                                'Updated ${lastUpdated(partner.timestamp)}',
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
+                                    errorWidget: (_, _, _) => const HugeIcon(
+                                      icon: HugeIcons.strokeRoundedManWoman,
+                                    ),
+                                  )
+                                : null,
                           ),
-                        ),
-                        const HugeIcon(
-                          icon: HugeIcons.strokeRoundedArrowRight01,
-                        ),
-                      ],
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  user?.displayName ?? 'User',
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(fontWeight: FontWeight.w600),
+                                ),
+                                Text(
+                                  'Updated ${lastUpdated(partner.timestamp)}',
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const HugeIcon(
+                            icon: HugeIcons.strokeRoundedArrowRight01,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -294,8 +297,8 @@ class _LocationMapState extends State<LocationMap>
         ),
 
         Positioned(
-          bottom: 90,
-          right: 24,
+          top: 160,
+          right: 16,
           child: FloatingActionButton(
             onPressed: focusCurrentUser,
             tooltip: 'Current Location',

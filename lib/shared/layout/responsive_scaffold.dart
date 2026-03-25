@@ -24,7 +24,7 @@ class ResponsiveScaffold extends StatefulWidget {
 }
 
 class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
-  int selectedIndex = 3;
+  int selectedIndex = 0;
 
   static const double railBreakpoint = 800;
 
