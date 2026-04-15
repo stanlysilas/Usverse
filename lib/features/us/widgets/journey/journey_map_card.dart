@@ -57,13 +57,6 @@ class JourneyMapCard extends StatelessWidget {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  if (snapshot.hasError) {
-                    debugPrint(snapshot.error.toString());
-                    return Center(
-                      child: Text('Error: ${snapshot.error.toString()}'),
-                    );
-                  }
-
                   final milestones = snapshot.data!;
 
                   if (milestones.isEmpty) {

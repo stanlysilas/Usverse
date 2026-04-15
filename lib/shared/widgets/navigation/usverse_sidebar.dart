@@ -41,7 +41,7 @@ class _UsverseSidebarState extends State<UsverseSidebar> {
       width: extended ? 260 : 72,
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
-        color: colors.surfaceContainer.withAlpha(100),
+        color: colors.surfaceContainer,
         border: Border(
           right: BorderSide(color: colors.outlineVariant, width: 0.5),
         ),
@@ -120,7 +120,6 @@ class _UsverseSidebarState extends State<UsverseSidebar> {
                       selected: widget.selectedIndex == index,
                       onTap: () => widget.onItemSelected(index),
                       extended: extended,
-                      selectedColor: colors.primaryContainer.withAlpha(80),
                     );
                   }),
                 ),

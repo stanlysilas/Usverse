@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
+import 'package:usverse/core/theme/app_theme_host.dart';
+import 'package:usverse/core/theme/theme_mode_adapter.dart';
 import 'package:usverse/services/firebase/auth_service.dart';
 import 'core/env/app_config.dart';
 
@@ -8,20 +11,8 @@ Future<void> main() async {
 
   await Firebase.initializeApp(options: AppConfig.firebaseOptions);
 
-  runApp(const UsverseApp());
-}
+  await Hive.initFlutter();
+  Hive.registerAdapter(ThemeModeAdapter());
 
-class UsverseApp extends StatelessWidget {
-  const UsverseApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      themeMode: ThemeMode.system,
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
-      title: 'Usverse',
-      home: AuthService(),
-    );
-  }
+  runApp(const AppThemeHost(child: AuthService()));
 }

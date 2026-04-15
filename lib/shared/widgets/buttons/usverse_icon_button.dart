@@ -40,7 +40,7 @@ class _UsverseIconButtonState extends State<UsverseIconButton> {
     final backgroundColor = _pressed
         ? colors.surfaceContainerHighest
         : _hovered
-        ? (widget.hoverColor ?? colors.surfaceContainerHigh)
+        ? (widget.hoverColor ?? colors.surfaceContainerHighest)
         : widget.backgroundColor ?? Colors.transparent;
 
     final foregroundColor = widget.foregroundColor ?? colors.onSurface;
@@ -63,7 +63,7 @@ class _UsverseIconButtonState extends State<UsverseIconButton> {
           onTapCancel: () => setState(() => _pressed = false),
           onTap: widget.onTap,
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 100),
+            duration: const Duration(milliseconds: 220),
             curve: Curves.easeOut,
             width: widget.size,
             height: widget.size,

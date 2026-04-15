@@ -5,7 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:usverse/core/crypto/relationship_key_provider.dart';
-import 'package:usverse/core/theme/mesh_gradient_background.dart';
+import 'package:usverse/core/theme/backgrounds/mesh_gradient_background.dart';
 import 'package:usverse/services/firebase/relationship_service.dart';
 import 'package:usverse/shared/pickers/date_time_pickers.dart';
 import 'package:usverse/shared/widgets/buttons/usverse_button.dart';

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:usverse/core/theme/mesh_gradient_background.dart';
+import 'package:usverse/core/theme/backgrounds/mesh_gradient_background.dart';
 import 'package:usverse/features/home/home_screen.dart';
+import 'package:usverse/features/location/location_map_screen.dart';
 import 'package:usverse/features/memories/widgets/create_memory_sheet.dart';
 import 'package:usverse/features/letters/create_daily_letter_sheet.dart';
 import 'package:usverse/features/letters/letters_screen.dart';
+import 'package:usverse/features/settings/settings_screen.dart';
 import 'package:usverse/features/us/us_screen.dart';
 import 'package:usverse/features/us/widgets/goals/create_shared_goals_dialog.dart';
 import 'package:usverse/models/create_action_item.dart';
@@ -47,6 +49,16 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
         label: 'Us',
         page: UsScreen(),
       ),
+      UsverseNavigationItem(
+        icon: HugeIcons.strokeRoundedLocation01,
+        label: 'Live Location',
+        page: LocationMapScreen(relationshipId: widget.relationshipId),
+      ),
+      UsverseNavigationItem(
+        icon: HugeIcons.strokeRoundedSettings01,
+        label: 'Settings',
+        page: SettingsScreen(),
+      ),
     ];
 
     return Scaffold(
@@ -72,6 +84,7 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
       ),
       floatingActionButton: selectedIndex != 1
           ? FloatingActionButton(
+              tooltip: 'Create',
               onPressed: () => showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
@@ -81,7 +94,7 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                   items: [
                     CreateActionItem(
                       leading: HugeIcon(icon: HugeIcons.strokeRoundedMail01),
-                      title: 'Write Letter',
+                      title: 'Letter',
                       subtitle: 'Schedule a letter for 24 hours',
                       onTap: () {
                         showModalBottomSheet(

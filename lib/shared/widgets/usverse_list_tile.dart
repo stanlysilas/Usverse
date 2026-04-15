@@ -42,10 +42,10 @@ class _UsverseListTileState extends State<UsverseListTile> {
     final colors = Theme.of(context).colorScheme;
 
     final backgroundColor = widget.selected
-        ? (widget.selectedColor ?? colors.surfaceContainerHigh)
+        ? (widget.selectedColor ?? colors.surfaceContainerHighest)
         : _hovered
-        ? (widget.backgroundColor ?? colors.surfaceContainerHighest)
-        : Colors.transparent;
+        ? (widget.backgroundColor ?? colors.surfaceContainerHigh)
+        : colors.surfaceContainer.withAlpha(0);
 
     final foregroundColor =
         widget.foregroundColor ??
@@ -61,7 +61,7 @@ class _UsverseListTileState extends State<UsverseListTile> {
         child: Tooltip(
           message: !widget.extended ? widget.title : '',
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 100),
+            duration: const Duration(milliseconds: 220),
             curve: Curves.easeOut,
             margin: widget.margin ?? const EdgeInsets.symmetric(vertical: 4),
             padding:
